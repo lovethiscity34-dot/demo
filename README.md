@@ -1,17 +1,24 @@
-# Horus Super Win 1000 — Stage 2
+# Horus Super Win 1000 — Stage 3
 
-Refactor arsitektur dari prototype satu-file menjadi multi-file tanpa mengubah aset simbol/Horus dan layout dasar.
+Tahap 3 fokus khusus pada **Normal Mode**.
 
-## Engine baru
-- Game State Machine dasar
-- Credit Engine dengan validasi taruhan
-- Bet Engine: Rp100–Rp4.000 per Rp100, lalu Rp5.000 dan kelipatan 2
-- Symbol Engine
-- Win Engine
-- Reel Engine
-- Tumble Engine
-- Normal Mode
-- Scatter Mode foundation
+## Perubahan
+- Reel Normal Mode kini benar-benar rolling dan berhenti satu per satu dari kiri ke kanan.
+- Normal spin dibuat lebih lambat/cinematic; Turbo tetap cepat.
+- Win detection tetap berbasis 8+ simbol identik non-Scatter.
+- Win highlight diberi jeda sebelum simbol dihapus.
+- Tumble: simbol menang hilang → simbol di atas jatuh → slot kosong diisi → cek kemenangan lagi.
+- RNG Normal diperketat dengan weighted bag yang lebih jarang menghasilkan 8+ match.
+- Probabilitas Scatter Normal diturunkan untuk menjaga frekuensi mode bonus tetap rendah pada tahap ini.
+- Memperbaiki bug perhitungan Free Spin: jumlah tambahan tidak lagi dihitung dua kali.
+- Tidak ada negative credit; validasi taruhan tetap menggunakan Credit Engine.
 
-## Catatan
-Multiplier Scatter, Horus animation system, audio engine, dan redesign desktop/mobile khusus akan dikerjakan pada tahap berikutnya.
+## Belum masuk Stage 3
+- Scatter Mode visual/ultimate final
+- multiplier x1–x1000
+- Horus character animation final
+- audio engine
+- final responsive/mobile redesign
+
+## Validasi
+Semua file JS Stage 3 dicek dengan `node --check`. Proyek tetap memakai script biasa agar sederhana untuk GitHub Pages/static hosting.
