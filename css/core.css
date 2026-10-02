@@ -120,3 +120,11 @@ background:radial-gradient(circle at 35% 25%,#fff1ad,#ffc42d 42%,#bc6b00 100%);b
  .spin-wrap{gap:3px}.bet-btn{width:31px;height:31px;font-size:17px}.spin{width:57px;height:57px}
  .stat strong{font-size:15px}.cell .label{display:none}
 }
+
+/* Stage 3 — Normal Mode reel presentation */
+.reel{will-change:transform,filter}
+.reel.rolling{animation:reelRoll .16s linear infinite;filter:blur(.25px) brightness(1.08)}
+.reel.stopped{animation:reelStop .24s cubic-bezier(.16,1,.3,1)}
+.cell.win{box-shadow:inset 0 0 0 2px rgba(246,198,75,.5),0 0 18px rgba(246,198,75,.22)}
+@keyframes reelRoll{0%{transform:translateY(-1.5%)}50%{transform:translateY(1.5%)}100%{transform:translateY(-1.5%)}}
+@keyframes reelStop{0%{transform:translateY(-5%);filter:brightness(1.5)}65%{transform:translateY(1.5%);filter:brightness(1.25)}100%{transform:translateY(0);filter:brightness(1)}}
