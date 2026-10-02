@@ -1,1 +1,466 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07152d">
+<meta name="description" content="Horus Super Win 1000 — demo slot bertema Mesir Kuno, gratis dimainkan.">
+<title>Horus Super Win 1000</title>
+<style>
+:root{
+  --bg:#050b18; --panel:#0a1730; --panel2:#0d2241; --gold:#f6c64b; --gold2:#ffdf7b;
+  --cyan:#35d9ff; --purple:#8c5cff; --red:#ff5b4d; --green:#55e6a5; --text:#f7fbff;
+  --muted:#a9bad4; --line:rgba(255,215,100,.22); --shadow:0 20px 70px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:
+radial-gradient(circle at 50% 15%,#183a68 0,#08152b 38%,#030711 78%);color:var(--text)}
+button{font:inherit}
+body{overflow-x:hidden}
+.app{min-height:100svh;display:flex;flex-direction:column;position:relative;isolation:isolate}
+.app:before,.app:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1}
+.app:before{background:
+linear-gradient(90deg,transparent 0 7%,rgba(246,198,75,.05) 7.1% 7.3%,transparent 7.4% 92.6%,rgba(246,198,75,.05) 92.7% 92.9%,transparent 93%),
+radial-gradient(circle at 20% 90%,rgba(54,217,255,.08),transparent 28%),
+radial-gradient(circle at 80% 90%,rgba(140,92,255,.08),transparent 28%)}
+.app:after{background-image:radial-gradient(rgba(255,255,255,.28) 1px,transparent 1px);background-size:100px 100px;opacity:.08}
 
+.topbar{height:74px;padding:10px clamp(10px,2vw,28px);display:flex;align-items:center;justify-content:space-between;
+border-bottom:1px solid var(--line);background:rgba(2,8,20,.72);backdrop-filter:blur(14px);position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-mark{width:50px;height:50px;flex:0 0 50px;filter:drop-shadow(0 0 12px rgba(246,198,75,.45))}
+.brand h1{font-size:clamp(16px,2.3vw,25px);margin:0;letter-spacing:.06em;line-height:1}
+.brand small{display:block;color:var(--gold2);font-size:10px;letter-spacing:.22em;margin-top:5px}
+.top-actions{display:flex;gap:8px}
+.icon-btn,.ghost-btn{border:1px solid var(--line);background:rgba(255,255,255,.05);color:#fff;border-radius:12px;min-height:42px;padding:0 12px;cursor:pointer}
+.icon-btn:hover,.ghost-btn:hover{background:rgba(255,255,255,.11);border-color:rgba(246,198,75,.55)}
+.layout{width:min(1450px,100%);margin:0 auto;padding:18px clamp(10px,2vw,26px) 26px;display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:16px;flex:1}
+.game-col{min-width:0}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:0 0 12px}
+.kicker{color:var(--cyan);font-size:11px;letter-spacing:.3em;text-transform:uppercase}
+.hero h2{font-family:Georgia,serif;font-size:clamp(24px,4vw,42px);margin:4px 0 0;color:#fff;text-shadow:0 2px 0 #000,0 0 20px rgba(53,217,255,.2)}
+.badge{border:1px solid rgba(246,198,75,.5);background:linear-gradient(180deg,rgba(246,198,75,.2),rgba(246,198,75,.05));padding:8px 12px;border-radius:999px;color:var(--gold2);font-size:12px;white-space:nowrap}
+
+.machine{position:relative;border:2px solid #a77921;border-radius:24px;padding:12px;background:
+linear-gradient(145deg,rgba(255,220,110,.12),transparent 18% 82%,rgba(255,220,110,.08)),
+linear-gradient(180deg,#102a4e,#071427);box-shadow:var(--shadow),inset 0 0 0 1px rgba(255,235,160,.14)}
+.machine:before{content:"";position:absolute;inset:6px;border:1px solid rgba(255,220,110,.18);border-radius:18px;pointer-events:none}
+.reel-frame{position:relative;border-radius:16px;overflow:hidden;border:1px solid rgba(53,217,255,.35);background:#041127;box-shadow:inset 0 0 50px rgba(0,0,0,.8)}
+.reels{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;padding:6px;background:
+linear-gradient(90deg,rgba(53,217,255,.06),transparent 20% 80%,rgba(53,217,255,.06))}
+.reel{min-width:0;display:grid;grid-template-rows:repeat(5,1fr);gap:4px;aspect-ratio:1/1.05}
+.cell{position:relative;display:grid;place-items:center;border-radius:10px;background:
+radial-gradient(circle at 50% 35%,rgba(255,255,255,.08),transparent 50%),linear-gradient(180deg,#0c2850,#06172f);
+border:1px solid rgba(255,255,255,.06);overflow:hidden;transition:transform .18s,filter .18s}
+.cell.win{animation:winPulse .65s ease-in-out infinite alternate;z-index:2}
+.cell.new{animation:drop .38s cubic-bezier(.2,.8,.2,1)}
+.cell svg{width:82%;height:82%;display:block;filter:drop-shadow(0 5px 5px rgba(0,0,0,.45))}
+.cell .label{position:absolute;bottom:2px;font-size:7px;color:rgba(255,255,255,.55);letter-spacing:.08em}
+@keyframes winPulse{from{transform:scale(1);filter:brightness(1)}to{transform:scale(1.06);filter:brightness(1.55) drop-shadow(0 0 12px rgba(246,198,75,.8))}}
+@keyframes drop{from{transform:translateY(-130%);opacity:.2}to{transform:translateY(0);opacity:1}}
+.flash{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle,rgba(255,215,85,.25),transparent 48%);opacity:0}
+.flash.on{animation:flash .55s ease}
+@keyframes flash{0%{opacity:0}35%{opacity:1}100%{opacity:0}}
+.hud{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:12px 8px 2px}
+.stat{min-width:0}
+.stat small{display:block;color:var(--muted);font-size:10px;letter-spacing:.12em}
+.stat strong{display:block;font-size:clamp(18px,3vw,27px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat.right{text-align:right}
+.spin-wrap{display:flex;align-items:center;gap:8px}
+.bet-btn{width:44px;height:44px;border-radius:50%;border:1px solid rgba(246,198,75,.55);background:#0b1e38;color:#fff;font-size:22px;cursor:pointer}
+.spin{width:78px;height:78px;border-radius:50%;border:3px solid var(--gold);cursor:pointer;color:#2c1600;font-weight:900;font-size:14px;
+background:radial-gradient(circle at 35% 25%,#fff1ad,#ffc42d 42%,#bc6b00 100%);box-shadow:0 0 0 5px rgba(246,198,75,.12),0 0 30px rgba(246,198,75,.28)}
+.spin:active{transform:scale(.94)}.spin:disabled{opacity:.55;cursor:not-allowed;filter:grayscale(.5)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding-top:8px}
+.control{border:1px solid rgba(255,255,255,.12);background:#081a31;color:#e8f1ff;border-radius:10px;padding:8px 10px;cursor:pointer;font-size:12px}
+.control.active{border-color:rgba(53,217,255,.65);background:rgba(53,217,255,.11);color:#fff}
+.control.primary{border-color:rgba(246,198,75,.5);color:var(--gold2)}
+
+.side{display:flex;flex-direction:column;gap:12px}
+.card{background:linear-gradient(180deg,rgba(12,31,58,.95),rgba(6,17,34,.95));border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 14px 45px rgba(0,0,0,.22)}
+.card h3{font-size:13px;letter-spacing:.15em;text-transform:uppercase;margin:0 0 12px;color:var(--gold2)}
+.horus-card{min-height:260px;display:grid;place-items:center;text-align:center;overflow:hidden;position:relative}
+.horus-card:before{content:"";position:absolute;width:210px;height:210px;border-radius:50%;background:radial-gradient(circle,rgba(246,198,75,.22),transparent 65%);filter:blur(4px)}
+.horus-art{width:min(85%,230px);position:relative;z-index:1;filter:drop-shadow(0 0 20px rgba(53,217,255,.28))}
+.meter{height:9px;border-radius:99px;background:#020914;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.meter i{display:block;height:100%;width:35%;background:linear-gradient(90deg,#35d9ff,#f6c64b);border-radius:inherit;transition:width .3s}
+.paytable{display:grid;gap:7px}
+.payrow{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:7px;font-size:11px}
+.payrow svg{width:32px;height:32px}.payrow b{font-size:11px}.payrow span{color:var(--gold2)}
+.history{max-height:180px;overflow:auto;display:grid;gap:6px}
+.history div{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:6px 7px;background:rgba(255,255,255,.035);border-radius:7px}
+.history strong{color:var(--green)}
+
+.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.76);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:18px}
+.modal.show{display:flex}
+.modal-box{width:min(760px,100%);max-height:min(88svh,760px);overflow:auto;border:1px solid rgba(246,198,75,.45);border-radius:20px;background:linear-gradient(180deg,#0d2444,#050f20);box-shadow:var(--shadow);padding:20px}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.modal-head h2{margin:0;font-family:Georgia,serif;color:var(--gold2)}
+.close{border:0;background:none;color:#fff;font-size:30px;cursor:pointer}
+.rules{line-height:1.55;color:#d6e4f7;font-size:13px}.rules h4{color:var(--gold2);margin:18px 0 6px}.rules ul{padding-left:20px}
+.big-win{position:fixed;inset:0;z-index:80;display:none;place-items:center;pointer-events:none;background:radial-gradient(circle,rgba(246,198,75,.15),transparent 45%)}
+.big-win.show{display:grid}.big-win div{text-align:center;animation:pop .7s cubic-bezier(.2,1.5,.4,1)}
+.big-win b{display:block;font-family:Georgia,serif;font-size:clamp(42px,10vw,100px);color:var(--gold2);text-shadow:0 5px 0 #5e3200,0 0 35px rgba(246,198,75,.8)}
+.big-win span{font-size:18px;letter-spacing:.3em}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;z-index:120;padding:10px 15px;border-radius:999px;background:#091b34;border:1px solid rgba(53,217,255,.4);color:#fff;pointer-events:none;transition:.25s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:1000px){
+ .layout{grid-template-columns:1fr}
+ .side{display:grid;grid-template-columns:1fr 1fr}
+ .horus-card{grid-row:span 2}
+}
+@media(max-width:640px){
+ .topbar{height:64px}.brand-mark{width:42px;height:42px;flex-basis:42px}
+ .brand small{font-size:8px}.top-actions .ghost-btn{display:none}
+ .layout{padding:9px 7px 16px;gap:9px}
+ .hero{margin-bottom:7px}.hero h2{font-size:24px}.badge{font-size:9px;padding:6px 8px}
+ .machine{padding:5px;border-radius:17px}.reels{gap:2px;padding:3px}.reel{gap:2px}.cell{border-radius:6px}
+ .hud{grid-template-columns:1fr auto 1fr;gap:4px;padding-top:7px}.stat strong{font-size:17px}.stat small{font-size:8px}
+ .spin{width:64px;height:64px;font-size:11px}.bet-btn{width:36px;height:36px}
+ .controls{gap:5px}.control{font-size:10px;padding:7px 8px}
+ .side{display:flex}.horus-card{min-height:180px}
+ .payrow{font-size:10px}
+}
+@media(max-width:390px){
+ .brand h1{font-size:14px}.brand small{display:none}
+ .spin-wrap{gap:3px}.bet-btn{width:31px;height:31px;font-size:17px}.spin{width:57px;height:57px}
+ .stat strong{font-size:15px}.cell .label{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#horusMark"/></svg>
+    <div><h1>HORUS SUPER WIN 1000</h1><small>SKY • WAR • PROTECTION</small></div>
+  </div>
+  <div class="top-actions">
+    <button class="ghost-btn" id="rulesBtn">ATURAN GAME</button>
+    <button class="icon-btn" id="soundBtn" aria-label="Suara">🔊</button>
+  </div>
+</header>
+
+<main class="layout">
+<section class="game-col">
+  <div class="hero">
+    <div><div class="kicker">TEMPLE OF THE SKY</div><h2>Horus Super Win 1000</h2></div>
+    <div class="badge">DEMO • KREDIT VIRTUAL</div>
+  </div>
+
+  <div class="machine">
+    <div class="reel-frame">
+      <div class="reels" id="reels"></div>
+      <div class="flash" id="flash"></div>
+    </div>
+    <div class="hud">
+      <div class="stat"><small>KREDIT</small><strong id="credit">Rp 100.000</strong></div>
+      <div class="spin-wrap">
+        <button class="bet-btn" id="betDown">−</button>
+        <button class="spin" id="spinBtn">SPIN</button>
+        <button class="bet-btn" id="betUp">+</button>
+      </div>
+      <div class="stat right"><small>TARUHAN</small><strong id="bet">Rp 750</strong></div>
+    </div>
+    <div class="controls">
+      <button class="control" id="turboBtn">⚡ TURBO</button>
+      <button class="control" id="autoBtn">↻ MAIN OTOMATIS</button>
+      <button class="control primary" id="buyBtn">☥ BELI FREE SPIN</button>
+      <button class="control" id="infoBtn">ⓘ INFO</button>
+    </div>
+  </div>
+</section>
+
+<aside class="side">
+  <div class="card horus-card">
+    <svg class="horus-art" viewBox="0 0 360 420" role="img" aria-label="Ilustrasi Horus orisinal">
+      <use href="#horusFull"/>
+    </svg>
+  </div>
+
+  <div class="card">
+    <h3>Progress Kuil</h3>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:7px"><span>Win meter</span><b id="winMeterText">0%</b></div>
+    <div class="meter"><i id="winMeter"></i></div>
+    <div style="margin-top:12px;font-size:11px;color:var(--muted)">4+ simbol SCATTER → 15 FREE SPIN. Setiap 3 scatter tambahan → +5 spin.</div>
+  </div>
+
+  <div class="card">
+    <h3>Nilai Simbol</h3>
+    <div class="paytable" id="paytable"></div>
+  </div>
+
+  <div class="card">
+    <h3>Riwayat</h3>
+    <div class="history" id="history"><div><span>Game siap dimainkan</span><span>—</span></div></div>
+  </div>
+</aside>
+</main>
+</div>
+
+<div class="big-win" id="bigWin"><div><span>HORUS MEMBERKATI</span><b id="bigWinAmount">Rp 0</b><span>WIN</span></div></div>
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-head"><h2 id="modalTitle">Aturan Game</h2><button class="close" id="closeModal">×</button></div>
+    <div class="rules" id="modalBody"></div>
+  </div>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff2a2"/><stop offset=".35" stop-color="#f6c64b"/><stop offset="1" stop-color="#8e4b00"/></linearGradient>
+  <linearGradient id="gBlue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a5f3ff"/><stop offset=".4" stop-color="#24bce8"/><stop offset="1" stop-color="#1741a5"/></linearGradient>
+  <linearGradient id="gPurple" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e0a5ff"/><stop offset=".45" stop-color="#7d42d8"/><stop offset="1" stop-color="#26104f"/></linearGradient>
+  <linearGradient id="gRed" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff8a7c"/><stop offset=".45" stop-color="#d63232"/><stop offset="1" stop-color="#65151f"/></linearGradient>
+  <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d7ff83"/><stop offset=".4" stop-color="#35c86b"/><stop offset="1" stop-color="#14633f"/></linearGradient>
+
+  <g id="horusMark">
+    <circle cx="50" cy="50" r="44" fill="#071a34" stroke="url(#gGold)" stroke-width="5"/>
+    <path d="M12 45 Q28 24 47 31 Q57 14 76 26 L91 18 L84 37 Q91 50 78 60 Q62 72 49 88 Q39 70 24 63 Q10 57 12 45Z" fill="url(#gBlue)" stroke="#f6c64b" stroke-width="3"/>
+    <path d="M48 30 L65 40 L48 51 L33 43Z" fill="#06162b" stroke="#fff0a0" stroke-width="2"/>
+    <circle cx="51" cy="41" r="4" fill="#fff3a2"/>
+    <path d="M52 55 L70 62 L54 68 L42 60Z" fill="#f6c64b"/>
+  </g>
+
+  <g id="horusFull">
+    <circle cx="180" cy="210" r="128" fill="#081a34" stroke="url(#gGold)" stroke-width="5" opacity=".9"/>
+    <circle cx="180" cy="210" r="112" fill="none" stroke="#35d9ff" stroke-width="2" opacity=".45"/>
+    <path d="M88 192 Q105 115 180 128 Q255 115 272 192 L249 221 Q238 190 212 177 L180 196 L148 177 Q122 190 111 221Z" fill="url(#gBlue)" stroke="url(#gGold)" stroke-width="6"/>
+    <path d="M180 126 Q204 105 237 127 Q259 143 268 176 L237 158 L211 165 L180 145 L149 165 L123 158 L92 176 Q101 143 123 127 Q156 105 180 126Z" fill="#0a2347" stroke="#f6c64b" stroke-width="4"/>
+    <path d="M180 139 L202 154 L180 169 L158 154Z" fill="#07162b" stroke="#fff0a0" stroke-width="3"/>
+    <circle cx="180" cy="154" r="5" fill="#fff5b4"/>
+    <path d="M180 171 L209 187 L180 201 L151 187Z" fill="url(#gGold)" stroke="#fff0a0" stroke-width="2"/>
+    <path d="M150 215 L120 256 L142 249 L132 287 L169 242 L154 248 L178 215Z" fill="#f6c64b"/>
+    <path d="M210 215 L240 256 L218 249 L228 287 L191 242 L206 248 L182 215Z" fill="#f6c64b"/>
+    <path d="M165 225 Q180 239 195 225 L193 276 Q180 293 167 276Z" fill="url(#gPurple)" stroke="#f6c64b" stroke-width="4"/>
+    <path d="M108 288 Q180 326 252 288 L235 330 Q180 362 125 330Z" fill="#0b2b51" stroke="url(#gGold)" stroke-width="5"/>
+    <path d="M128 306 Q180 330 232 306" fill="none" stroke="#35d9ff" stroke-width="3"/>
+    <path d="M72 194 Q52 170 43 132 Q78 144 104 173" fill="none" stroke="url(#gGold)" stroke-width="12" stroke-linecap="round"/>
+    <path d="M288 194 Q308 170 317 132 Q282 144 256 173" fill="none" stroke="url(#gGold)" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="180" cy="73" r="19" fill="#071a34" stroke="#f6c64b" stroke-width="5"/>
+    <path d="M180 56 L187 73 L180 91 L173 73Z" fill="#ffdf7b"/>
+    <path d="M55 344 H305" stroke="#f6c64b" stroke-width="3" opacity=".45"/>
+    <path d="M90 356 H270" stroke="#35d9ff" stroke-width="2" opacity=".35"/>
+  </g>
+
+  <!-- Symbol shapes -->
+  <g id="sym-eye">
+    <path d="M10 50 Q50 12 90 50 Q50 88 10 50Z" fill="#07172e" stroke="url(#gGold)" stroke-width="6"/>
+    <path d="M21 50 Q50 29 79 50 Q50 71 21 50Z" fill="url(#gBlue)" stroke="#9ff5ff" stroke-width="2"/>
+    <circle cx="50" cy="50" r="10" fill="#f6c64b"/><circle cx="50" cy="50" r="5" fill="#07172e"/>
+    <path d="M12 57 Q34 76 68 67" fill="none" stroke="#35d9ff" stroke-width="4"/>
+  </g>
+  <g id="sym-ankh">
+    <circle cx="50" cy="28" r="17" fill="none" stroke="url(#gGold)" stroke-width="9"/>
+    <path d="M50 43 V86 M23 56 H77" stroke="url(#gGold)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M31 73 H69" stroke="#35d9ff" stroke-width="4"/>
+  </g>
+  <g id="sym-scarab">
+    <ellipse cx="50" cy="53" rx="29" ry="33" fill="url(#gPurple)" stroke="url(#gGold)" stroke-width="5"/>
+    <path d="M50 23 V83 M23 48 Q50 31 77 48 M25 61 Q50 45 75 61" fill="none" stroke="#8fefff" stroke-width="3"/>
+    <circle cx="50" cy="50" r="8" fill="#f6c64b"/>
+  </g>
+  <g id="sym-sun">
+    <circle cx="50" cy="50" r="25" fill="url(#gGold)" stroke="#fff0a0" stroke-width="3"/>
+    <g stroke="#f6c64b" stroke-width="7" stroke-linecap="round"><path d="M50 8V20"/><path d="M50 80v12"/><path d="M8 50h12"/><path d="M80 50h12"/><path d="M20 20l8 8"/><path d="M72 72l8 8"/><path d="M80 20l-8 8"/><path d="M28 72l-8 8"/></g>
+  </g>
+  <g id="sym-falcon">
+    <path d="M12 67 Q28 26 55 27 L88 12 L75 38 Q84 52 69 66 L53 54 L41 80 L33 59Z" fill="url(#gBlue)" stroke="url(#gGold)" stroke-width="5"/>
+    <circle cx="56" cy="39" r="5" fill="#fff5a6"/><path d="M68 55 L86 66 L66 69" fill="#f6c64b"/>
+  </g>
+  <g id="sym-crown">
+    <path d="M18 72 L13 30 L35 48 L50 22 L65 48 L87 30 L82 72Z" fill="url(#gGold)" stroke="#fff0a0" stroke-width="4"/>
+    <path d="M25 72 H75 V83 H25Z" fill="url(#gPurple)" stroke="#f6c64b" stroke-width="3"/>
+    <circle cx="50" cy="61" r="6" fill="#35d9ff"/>
+  </g>
+  <g id="sym-lotus">
+    <path d="M50 83 Q18 72 19 46 Q33 50 50 65 Q67 50 81 46 Q82 72 50 83Z" fill="url(#gPurple)" stroke="url(#gGold)" stroke-width="5"/>
+    <path d="M50 66 Q29 47 34 24 Q49 31 50 58 Q51 31 66 24 Q71 47 50 66Z" fill="#ff6bd6" stroke="#fff0a0" stroke-width="3"/>
+  </g>
+  <g id="sym-horus">
+    <use href="#horusMark" transform="translate(0 0) scale(1)"/>
+  </g>
+  <g id="sym-scatter">
+    <circle cx="50" cy="50" r="40" fill="url(#gPurple)" stroke="url(#gGold)" stroke-width="5"/>
+    <path d="M50 17 L59 40 L84 42 L65 57 L71 81 L50 68 L29 81 L35 57 L16 42 L41 40Z" fill="#35d9ff" stroke="#fff0a0" stroke-width="3"/>
+    <circle cx="50" cy="50" r="8" fill="#f6c64b"/>
+  </g>
+</defs>
+</svg>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const fmt = n => "Rp " + Math.max(0,Math.round(n)).toLocaleString("id-ID");
+const SYMBOLS = [
+  {id:"eye", name:"Mata Horus", value:8, svg:"#sym-eye"},
+  {id:"ankh", name:"Ankh", value:12, svg:"#sym-ankh"},
+  {id:"scarab", name:"Scarab", value:18, svg:"#sym-scarab"},
+  {id:"sun", name:"Matahari Ra", value:25, svg:"#sym-sun"},
+  {id:"falcon", name:"Elang Horus", value:40, svg:"#sym-falcon"},
+  {id:"crown", name:"Mahkota Firaun", value:60, svg:"#sym-crown"},
+  {id:"lotus", name:"Lotus", value:85, svg:"#sym-lotus"},
+  {id:"horus", name:"Horus", value:150, svg:"#sym-horus"},
+  {id:"scatter", name:"SCATTER", value:0, svg:"#sym-scatter", scatter:true}
+];
+const BETS=[250,500,750,1000,1500,2500,5000];
+const ROWS=5,COLS=6;
+let credit=100000, bet=750, busy=false, turbo=false, auto=false, freeSpins=0, totalWin=0, sound=true;
+let grid=[];
+
+function weighted(){
+  const bag=["eye","eye","eye","ankh","ankh","ankh","scarab","scarab","sun","sun","falcon","crown","lotus","horus"];
+  if(Math.random()<0.055) bag.push("scatter");
+  return bag[Math.floor(Math.random()*bag.length)];
+}
+function sym(id){return SYMBOLS.find(s=>s.id===id)}
+function makeCell(id, fresh=false){
+  const s=sym(id);
+  const d=document.createElement("div"); d.className="cell"+(fresh?" new":""); d.dataset.id=id;
+  d.innerHTML=`<svg viewBox="0 0 100 100" aria-label="${s.name}"><use href="${s.svg}"/></svg>`;
+  return d;
+}
+function renderGrid(fresh=false){
+  const root=$("#reels"); root.innerHTML="";
+  for(let c=0;c<COLS;c++){
+    const reel=document.createElement("div"); reel.className="reel";
+    for(let r=0;r<ROWS;r++) reel.appendChild(makeCell(grid[r][c],fresh));
+    root.appendChild(reel);
+  }
+}
+function randomGrid(){return Array.from({length:ROWS},()=>Array.from({length:COLS},weighted))}
+function clusters(){
+  // Win condition: 8+ identical symbols anywhere. Scatter excluded.
+  const counts={}; grid.flat().forEach(id=>{if(id!=="scatter") counts[id]=(counts[id]||0)+1});
+  return Object.entries(counts).filter(([,n])=>n>=8).map(([id,n])=>({id,n}));
+}
+function markWins(wins){
+  const ids=new Set(wins.map(w=>w.id));
+  document.querySelectorAll(".cell").forEach(el=>{if(ids.has(el.dataset.id))el.classList.add("win")});
+}
+function calcWin(wins){
+  return wins.reduce((sum,w)=>{
+    const s=sym(w.id);
+    let multiplier = w.n>=20?12:w.n>=16?8:w.n>=12?5:3;
+    return sum + bet * s.value/10 * multiplier;
+  },0);
+}
+function scatterCount(){return grid.flat().filter(x=>x==="scatter").length}
+function tumble(){
+  const wins=clusters();
+  if(!wins.length) return 0;
+  markWins(wins);
+  const win=calcWin(wins);
+  totalWin+=win;
+  addHistory("Win kombinasi",win);
+  return new Promise(resolve=>{
+    setTimeout(()=>{
+      const remove=new Set(wins.map(w=>w.id));
+      for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(remove.has(grid[r][c])) grid[r][c]=null;
+      for(let c=0;c<COLS;c++){
+        const kept=[]; for(let r=ROWS-1;r>=0;r--) if(grid[r][c]!=null) kept.push(grid[r][c]);
+        while(kept.length<ROWS) kept.push(weighted());
+        for(let r=ROWS-1,i=0;r>=0;r--,i++) grid[r][c]=kept[i];
+      }
+      renderGrid(true); resolve(win);
+    },turbo?130:420);
+  });
+}
+async function playSpin({free=false}={}){
+  if(busy) return;
+  busy=true; $("#spinBtn").disabled=true;
+  const cost=free?0:bet;
+  if(!free){
+    if(credit<cost){toast("Kredit kurang — demo di-reset ke Rp 100.000."); credit=100000;}
+    credit-=cost;
+  }
+  updateHUD();
+  await new Promise(r=>setTimeout(r,turbo?120:520));
+  grid=randomGrid(); renderGrid(true);
+  const scat=scatterCount();
+  let spinWin=0;
+  let rounds=0;
+  while(rounds<30){
+    const w=clusters(); if(!w.length) break;
+    spinWin += await tumble(); rounds++;
+  }
+  if(scat>=4){
+    const add=scat>=6?10:5;
+    freeSpins += 15 + add;
+    toast(`${scat} SCATTER! +${15+add} FREE SPIN`);
+  }
+  if(spinWin>0){
+    credit+=spinWin;
+    $("#flash").classList.remove("on"); void $("#flash").offsetWidth; $("#flash").classList.add("on");
+    if(spinWin>=bet*20) bigWin(spinWin);
+  }
+  if(credit<10000){ credit=100000; toast("Kredit di bawah Rp 10.000 → diisi ulang menjadi Rp 100.000."); }
+  updateHUD();
+  busy=false; $("#spinBtn").disabled=false;
+  if(auto){setTimeout(()=>playSpin(),turbo?90:350)}
+  else if(freeSpins>0){freeSpins--; updateHUD(); setTimeout(()=>playSpin({free:true}),turbo?90:450)}
+}
+function updateHUD(){
+  $("#credit").textContent=fmt(credit); $("#bet").textContent=fmt(bet);
+  const meter=Math.min(100,Math.round((totalWin/(bet*100))*100));
+  $("#winMeter").style.width=meter+"%"; $("#winMeterText").textContent=meter+"%";
+  $("#autoBtn").textContent=auto?"■ HENTIKAN OTOMATIS":"↻ MAIN OTOMATIS";
+  $("#autoBtn").classList.toggle("active",auto);
+  $("#turboBtn").classList.toggle("active",turbo);
+  $("#spinBtn").textContent=freeSpins>0?`FREE\n${freeSpins}`:"SPIN";
+}
+function addHistory(label,amount){
+  const h=$("#history"), d=document.createElement("div");
+  d.innerHTML=`<span>${label}</span><strong>+${fmt(amount)}</strong>`;
+  h.prepend(d); while(h.children.length>8) h.lastChild.remove();
+}
+function toast(msg){
+  const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),2400);
+}
+function bigWin(amount){
+  $("#bigWinAmount").textContent=fmt(amount); $("#bigWin").classList.add("show");
+  setTimeout(()=>$("#bigWin").classList.remove("show"),1600);
+}
+function openModal(title,body){$("#modalTitle").textContent=title;$("#modalBody").innerHTML=body;$("#modal").classList.add("show")}
+function paytable(){
+  $("#paytable").innerHTML=SYMBOLS.filter(s=>!s.scatter).slice().reverse().map(s=>
+    `<div class="payrow"><svg viewBox="0 0 100 100"><use href="${s.svg}"/></svg><b>${s.name}</b><span>×${s.value}</span></div>`
+  ).join("");
+}
+function buyFree(){
+  if(busy) return;
+  const cost=bet*100;
+  if(credit<cost){toast(`Beli free spin butuh ${fmt(cost)}. Kredit demo di-reset bila di bawah Rp 10.000.`);return}
+  credit-=cost; freeSpins=15; updateHUD(); toast("15 FREE SPIN dibeli untuk demo.");
+}
+function setBet(delta){
+  const i=BETS.indexOf(bet), ni=Math.max(0,Math.min(BETS.length-1,i+delta));
+  bet=BETS[ni]; updateHUD();
+}
+$("#spinBtn").onclick=()=>playSpin();
+$("#betUp").onclick=()=>setBet(1); $("#betDown").onclick=()=>setBet(-1);
+$("#turboBtn").onclick=()=>{turbo=!turbo;updateHUD()};
+$("#autoBtn").onclick=()=>{auto=!auto;updateHUD();if(auto&&!busy)playSpin()};
+$("#buyBtn").onclick=buyFree;
+$("#soundBtn").onclick=()=>{sound=!sound;$("#soundBtn").textContent=sound?"🔊":"🔇"};
+$("#closeModal").onclick=()=>$("#modal").classList.remove("show");
+$("#modal").onclick=e=>{if(e.target===$("#modal"))$("#modal").classList.remove("show")};
+$("#rulesBtn").onclick=()=>openModal("Aturan Game",`
+<h4>Horus Super Win 1000</h4>
+<p>Game ini adalah <b>demo slot dengan kredit virtual</b>. Tidak ada uang asli, deposit, withdraw, atau hadiah uang.</p>
+<h4>Tumble</h4><p>Setiap spin menggunakan grid 6×5. Kombinasi simbol yang memenuhi syarat akan menghilang, lalu simbol dari atas turun mengisi ruang kosong. Tumble berlanjut sampai tidak ada kombinasi baru.</p>
+<h4>Kemenangan</h4><p>8 atau lebih simbol identik (kecuali Scatter) di layar membentuk kemenangan. Nilai kemenangan mengikuti tabel simbol dan jumlah simbol.</p>
+<h4>Scatter & Free Spin</h4><p>4+ Scatter memberi Free Spin. 4–5 Scatter memberi 20 Free Spin pada demo ini, sedangkan 6+ memberi 25. Setiap 3 Scatter yang didapat saat Free Spin menambah 5 spin.</p>
+<h4>Kredit Demo</h4><p>Kredit awal <b>Rp 100.000</b>. Bila saldo turun di bawah <b>Rp 10.000</b>, otomatis diisi kembali menjadi Rp 100.000 agar demo dapat dimainkan berulang kali.</p>
+<h4>Batas</h4><p>Seluruh nilai bersifat virtual dan tidak dapat diuangkan.</p>`);
+$("#infoBtn").onclick=()=>openModal("Cara Bermain",`
+<ul><li>Pilih taruhan dengan tombol − / +.</li><li>Tekan <b>SPIN</b> untuk memulai.</li><li><b>⚡ TURBO</b> mempercepat animasi.</li><li><b>MAIN OTOMATIS</b> menjalankan spin berulang.</li><li><b>BELI FREE SPIN</b> adalah fitur demo yang memakai 100× taruhan virtual.</li></ul>
+<p>Tampilan dibuat responsif untuk desktop, tablet, dan layar mobile.</p>`);
+paytable(); grid=randomGrid(); renderGrid(); updateHUD();
+</script>
+</body>
+</html>
