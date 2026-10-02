@@ -12,13 +12,13 @@
     if(this.busy) return; if(!free && !this.credit.canAfford(this.bet.value)){this.ui.toast("Kredit tidak cukup untuk taruhan ini."); return;}
     this.busy=true; this.setState(mode==="SCATTER"?HorusGameState.SCATTER_SPINNING:HorusGameState.SPINNING); this.ui.setBusy(true);
     if(!free) this.credit.spend(this.bet.value); this.ui.update();
-    await new Promise(r=>setTimeout(r,this.turbo?HorusConfig.TURBO_SPIN_DELAY:HorusConfig.NORMAL_SPIN_DELAY));
-    this.grid=this.symbols.randomGrid(); this.reels.render(this.grid,true);
+    this.grid=this.symbols.randomGrid();
+    await this.reels.animateSpin(this.grid,this.turbo);
     const scatterCount=this.wins.scatterCount(this.grid);
     this.setState(mode==="SCATTER"?HorusGameState.SCATTER_TUMBLING:HorusGameState.TUMBLING);
     const tumble=new HorusTumbleEngine({reels:this.reels,wins:this.wins,bet:()=>this.bet.value,getTurbo:()=>this.turbo,markWins:w=>this.ui.markWins(w),recordWin:(win,w)=>{this.totalWin+=win;this.ui.addHistory("Win kombinasi",win);}});
     const spinWin=await tumble.run(this.grid);
-    if(mode==="NORMAL" && scatterCount>=HorusConfig.SCATTER_TRIGGER){this.freeSpins += this.scatterMode.addFreeSpins(scatterCount); this.setState(HorusGameState.SCATTER_INTRO); this.ui.toast(`${scatterCount} SCATTER! +${this.scatterMode.addFreeSpins(scatterCount)} FREE SPIN`);}
+    if(mode==="NORMAL" && scatterCount>=HorusConfig.SCATTER_TRIGGER){const added=this.scatterMode.addFreeSpins(scatterCount); this.freeSpins += added; this.setState(HorusGameState.SCATTER_INTRO); this.ui.toast(`${scatterCount} SCATTER! +${added} FREE SPIN`);}
     if(spinWin>0){this.credit.add(spinWin); if(spinWin>=this.bet.value*20)this.ui.bigWin(spinWin);}
     if(this.credit.resetIfNeeded()) this.ui.toast("Kredit di bawah Rp 10.000 → diisi ulang menjadi Rp 100.000.");
     this.ui.update(); this.busy=false; this.setState(this.freeSpins>0?HorusGameState.SCATTER:HorusGameState.IDLE); this.ui.setBusy(false);
