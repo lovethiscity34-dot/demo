@@ -1,0 +1,17 @@
+"use strict";
+window.HorusConfig = Object.freeze({
+  ROWS: 5, COLS: 6,
+  STARTING_CREDIT: 100000, RESET_BELOW: 10000,
+  DEFAULT_BET: 750,
+  NORMAL_SPIN_DELAY: 520, TURBO_SPIN_DELAY: 120,
+  NORMAL_TUMBLE_DELAY: 420, TURBO_TUMBLE_DELAY: 130,
+  MAX_TUMBLE_ROUNDS: 30,
+  SCATTER_TRIGGER: 4,
+  SCATTER_BASE_SPINS: 15,
+  SCATTER_EXTRA_PER_3: 5,
+  BETS_BELOW_OR_EQUAL_4000_STEP: 100,
+  BET_TRANSITION: 4000, BET_FIRST_HIGH: 5000,
+  BET_HIGH_MULTIPLIER: 2,
+  SYMBOL_BAG: ["eye","eye","eye","ankh","ankh","ankh","scarab","scarab","sun","sun","falcon","crown","lotus","horus"],
+  SCATTER_PROBABILITY: 0.055
+});
