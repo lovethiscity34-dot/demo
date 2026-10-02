@@ -2,22 +2,21 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#07152d">
-<meta name="description" content="Horus Super Win 1000 — demo slot bertema Mesir Kuno, gratis dimainkan.">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#061225">
+<meta name="description" content="Horus Super Win 1000 — free browser demo slot.">
 <title>Horus Super Win 1000</title>
 <link rel="stylesheet" href="css/core.css">
 </head>
 <body>
-
-<div class="app">
+<div class="app normal-mode" id="app">
 <header class="topbar">
   <div class="brand">
-    <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#horusMark"/></svg>
-    <div><h1>HORUS SUPER WIN 1000</h1><small>SKY • WAR • PROTECTION</small></div>
+    <svg class="brand-mark" viewBox="0 0 100 100"><use href="#horusMark"/></svg>
+    <div><h1>HORUS SUPER WIN 1000</h1><small id="modeCaption">TEMPLE OF THE SKY • NORMAL</small></div>
   </div>
   <div class="top-actions">
-    <button class="ghost-btn" id="rulesBtn">ATURAN GAME</button>
+    <button class="ghost-btn" id="rulesBtn">ATURAN</button>
     <button class="icon-btn" id="soundBtn" aria-label="Suara">🔊</button>
   </div>
 </header>
@@ -25,14 +24,16 @@
 <main class="layout">
 <section class="game-col">
   <div class="hero">
-    <div><div class="kicker">TEMPLE OF THE SKY</div><h2>Horus Super Win 1000</h2></div>
-    <div class="badge">DEMO • KREDIT VIRTUAL</div>
+    <div><div class="kicker" id="modeKicker">TEMPLE OF THE SKY</div><h2>Horus Super Win 1000</h2></div>
+    <div class="badge" id="modeBadge">DEMO • KREDIT VIRTUAL</div>
   </div>
 
-  <div class="machine">
+  <div class="machine" id="machine">
+    <div class="mode-ribbon" id="modeRibbon">NORMAL MODE</div>
     <div class="reel-frame">
       <div class="reels" id="reels"></div>
       <div class="flash" id="flash"></div>
+      <div class="win-banner" id="winBanner">WIN</div>
     </div>
     <div class="hud">
       <div class="stat"><small>KREDIT</small><strong id="credit">Rp 100.000</strong></div>
@@ -43,9 +44,10 @@
       </div>
       <div class="stat right"><small>TARUHAN</small><strong id="bet">Rp 750</strong></div>
     </div>
+    <div class="free-hud" id="freeHud"><span>FREE SPIN</span><b id="freeSpins">0</b><span>•</span><span>MULTI</span><b id="currentMulti">x1</b></div>
     <div class="controls">
       <button class="control" id="turboBtn">⚡ TURBO</button>
-      <button class="control" id="autoBtn">↻ MAIN OTOMATIS</button>
+      <button class="control" id="autoBtn">↻ AUTO</button>
       <button class="control primary" id="buyBtn">☥ BELI FREE SPIN</button>
       <button class="control" id="infoBtn">ⓘ INFO</button>
     </div>
@@ -53,17 +55,18 @@
 </section>
 
 <aside class="side">
-  <div class="card horus-card">
-    <svg class="horus-art" viewBox="0 0 360 420" role="img" aria-label="Ilustrasi Horus orisinal">
-      <use href="#horusFull"/>
-    </svg>
+  <div class="card horus-card" id="horusCard">
+    <div class="aura"></div>
+    <div class="ultimate-ring"></div>
+    <svg class="horus-art" viewBox="0 0 360 420"><use href="#horusFull"/></svg>
+    <div class="horus-state" id="horusState">GUARDIAN</div>
   </div>
 
   <div class="card">
     <h3>Progress Kuil</h3>
-    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:7px"><span>Win meter</span><b id="winMeterText">0%</b></div>
+    <div class="meter-line"><span>Win meter</span><b id="winMeterText">0%</b></div>
     <div class="meter"><i id="winMeter"></i></div>
-    <div style="margin-top:12px;font-size:11px;color:var(--muted)">4+ simbol SCATTER → 15 FREE SPIN. Setiap 3 scatter tambahan → +5 spin.</div>
+    <div class="hint" id="modeHint">8+ simbol identik membentuk kemenangan. 4+ Scatter membuka Scatter Mode.</div>
   </div>
 
   <div class="card">
@@ -79,15 +82,9 @@
 </main>
 </div>
 
-<div class="big-win" id="bigWin"><div><span>HORUS MEMBERKATI</span><b id="bigWinAmount">Rp 0</b><span>WIN</span></div></div>
+<div class="big-win" id="bigWin"><div><span id="bigWinTitle">HORUS MEMBERKATI</span><b id="bigWinAmount">Rp 0</b><span id="bigWinSub">WIN</span></div></div>
 <div class="toast" id="toast"></div>
-
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <div class="modal-head"><h2 id="modalTitle">Aturan Game</h2><button class="close" id="closeModal">×</button></div>
-    <div class="rules" id="modalBody"></div>
-  </div>
-</div>
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h2 id="modalTitle">Aturan Game</h2><button class="close" id="closeModal">×</button></div><div class="rules" id="modalBody"></div></div></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <defs>
@@ -170,19 +167,7 @@
   </g>
 </defs>
 </svg>
-
-
 <script src="js/config.js"></script>
-<script src="js/game-state.js"></script>
-<script src="js/credit-engine.js"></script>
-<script src="js/bet-engine.js"></script>
-<script src="js/symbol-engine.js"></script>
-<script src="js/win-engine.js"></script>
-<script src="js/reel-engine.js"></script>
-<script src="js/tumble-engine.js"></script>
-<script src="js/normal-mode.js"></script>
-<script src="js/scatter-mode.js"></script>
-<script src="js/game-engine.js"></script>
-<script src="js/main.js"></script>
+<script src="js/game.js"></script>
 </body>
 </html>
