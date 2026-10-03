@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 420">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3a6"/><stop offset=".35" stop-color="#f2bd3d"/><stop offset="1" stop-color="#8b4200"/></linearGradient><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b8f7ff"/><stop offset=".45" stop-color="#2cb8e6"/><stop offset="1" stop-color="#173c98"/></linearGradient><linearGradient id="p"><stop stop-color="#e6a7ff"/><stop offset=".55" stop-color="#7937c9"/><stop offset="1" stop-color="#260c55"/></linearGradient><filter id="w"><feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#f6c64b"/></filter></defs>
+<circle filter="url(#w)" cx="180" cy="210" r="150" fill="#06152b" stroke="url(#g)" stroke-width="6"/>
+<circle cx="180" cy="210" r="133" fill="none" stroke="#36d8ff" stroke-width="3" opacity=".55"/>
+<path d="M74 201Q92 117 180 126Q268 117 286 201L257 235Q247 190 215 172L180 195L145 172Q113 190 103 235Z" fill="url(#b)" stroke="url(#g)" stroke-width="7"/>
+<path d="M180 125Q207 95 248 125Q274 145 284 183L246 160L213 168L180 146L147 168L114 160L76 183Q86 145 112 125Q153 95 180 125Z" fill="#0a2348" stroke="#f6c64b" stroke-width="4"/>
+<path d="M180 140L206 155L180 173L154 155Z" fill="#061326" stroke="#fff1a2" stroke-width="3"/>
+<circle cx="180" cy="156" r="5" fill="#fff7bc"/>
+<path d="M180 174L214 190L180 207L146 190Z" fill="url(#g)" stroke="#fff0a0" stroke-width="2"/>
+<path d="M149 220L112 267L140 258L127 306L172 250L153 258L179 219Z" fill="#f6c64b"/><path d="M211 220L248 267L220 258L233 306L188 250L207 258L181 219Z" fill="#f6c64b"/>
+<path d="M162 226Q180 243 198 226L195 288Q180 309 165 288Z" fill="url(#p)" stroke="#f6c64b" stroke-width="5"/>
+<path d="M106 298Q180 339 254 298L237 343Q180 376 123 343Z" fill="#0a2a4e" stroke="url(#g)" stroke-width="6"/><path d="M129 318Q180 344 231 318" fill="none" stroke="#36d8ff" stroke-width="3"/>
+<path d="M71 201Q49 173 39 128Q79 142 105 175" fill="none" stroke="url(#g)" stroke-width="13" stroke-linecap="round"/><path d="M289 201Q311 173 321 128Q281 142 255 175" fill="none" stroke="url(#g)" stroke-width="13" stroke-linecap="round"/>
+<circle cx="180" cy="71" r="21" fill="#06182f" stroke="#f6c64b" stroke-width="5"/><path d="M180 53L188 71L180 91L172 71Z" fill="#ffdf7b"/>
+</svg>
