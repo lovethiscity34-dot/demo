@@ -1,1 +1,1 @@
-
+Separate SVG symbol pack. Multiplier tiers are base art plus dynamic number/color in the game UI.
