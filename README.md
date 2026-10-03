@@ -1,32 +1,20 @@
-# Horus Super Win 1000 — Final Demo Build
+# Horus Super Win 1000
 
-Browser demo slot virtual bertema Horus, siap di-host sebagai static site di GitHub Pages.
+Demo slot virtual gratis, responsif untuk GitHub Pages.
 
-## Struktur
-- `index.html` — UI
-- `css/core.css` — responsive desktop/mobile styling
-- `js/` — state machine, reel/tumble, RNG, bet/credit, scatter, multiplier, audio, Horus controller
-- `assets/horus/` — character pose assets terpisah (SVG)
-- `assets/symbols/` — symbol assets terpisah (SVG)
-- `assets/backgrounds/` — normal/scatter/ultimate backgrounds
-- `assets/effects/` — FX assets
-- `audio/` — MP3 + WAV fallback assets
+## Perubahan build ini
+- Reel menggunakan strip vertikal yang benar-benar bergerak dengan acceleration/deceleration, staggered stop, blur, dan settle.
+- Teks ribbon "Normal Mode / Scatter Mode" dihapus dari mesin; mode dibedakan lewat visual, Horus, lighting, FX, dan audio.
+- Scatter mempunyai lifecycle baru: setiap pembelian membuat sesi Scatter baru, reset state sesi, menjalankan transformasi, lalu memulai Free Spin.
+- Buy Scatter kedua dan seterusnya tidak lagi hanya memotong kredit.
+- RNG putaran biasa diperketat: kombinasi menang normal membutuhkan 10+ simbol identik; Scatter tetap lebih longgar pada 8+.
+- Probabilitas Scatter dan multiplier diseimbangkan ulang; multiplier tinggi tetap jauh lebih langka.
+- Tumble/refill tetap dibatasi untuk mencegah loop tanpa akhir.
+- Credit/bet tetap virtual; kredit tidak boleh negatif dan reset demo tetap aktif di bawah Rp10.000.
+- Desktop: Horus di sisi kanan. Mobile: Horus di atas mesin.
 
 ## GitHub Pages
-Upload **seluruh isi ZIP**, bukan hanya `index.html`. Pastikan struktur folder tidak berubah. Semua path menggunakan relative URL sehingga dapat berjalan di root maupun subpath GitHub Pages.
+Upload isi folder build ini ke repository Pages. `index.html` harus berada di root folder yang dipublikasikan. Semua asset memakai relative path.
 
-## Gameplay
-- Demo credit: Rp100.000
-- Reset otomatis bila saldo < Rp10.000
-- Bet: Rp100–Rp4.000 per Rp100, lalu Rp5.000, Rp10.000, kemudian ×2
-- Normal: RNG lebih ketat, 8+ simbol identik untuk win
-- Tumble/refill maksimal 12 ronde per spin
-- 4+ Scatter memicu Free Spin
-- Scatter: Horus Ultimate + multiplier independen x1–x1000
-- Turbo dan Auto tersedia
-
-## Audio
-Audio dibuat sebagai aset file nyata. Browser biasanya membutuhkan interaksi pengguna sebelum audio dapat diputar; audio mulai setelah tombol permainan ditekan.
-
-## Catatan teknis
-Character/symbol artwork di sini adalah vector SVG terpisah agar ringan, tajam, dan stabil di GitHub Pages.
+## Catatan
+Game ini hanya demo kredit virtual; tidak menggunakan uang nyata, deposit, atau cash-out.
