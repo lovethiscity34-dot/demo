@@ -1,16 +1,1 @@
-(function(){
-  function tier(n){if(n<=9)return'green';if(n<=19)return'blue';if(n<=49)return'purple';if(n<=99)return'magenta';if(n<=249)return'gold';if(n<=499)return'cyan';if(n<=999)return'solar';return'divine'}
-  function resolveWinning(values){
-    const valid=(values||[]).filter(v=>Number(v)>0);
-    if(!valid.length)return{multiplier:1,count:0,tier:'green'};
-    const max=Math.max.apply(Math,valid);
-    return{multiplier:max,count:valid.length,tier:tier(max)};
-  }
-  // Kept for compatibility with older code: this now resolves only supplied valid values.
-  function resolve(grid){
-    const values=[];
-    (grid||[]).flat().forEach(c=>{if(c&&c.multiplier>0)values.push(c.multiplier)});
-    return resolveWinning(values);
-  }
-  window.HorusMultiplierEngine={tier,resolveWinning,resolve};
-})();
+(function(){function tier(n){if(n<=9)return'green';if(n<=19)return'blue';if(n<=49)return'purple';if(n<=99)return'magenta';if(n<=249)return'gold';if(n<=499)return'cyan';if(n<=999)return'solar';return'divine'}function resolve(grid){let max=1,count=0;grid.flat().forEach(c=>{if(c&&c.multiplier>0){count++;max=Math.max(max,c.multiplier)}});return{multiplier:max,count}}function resolveConnected(grid,wins){const connected=new Set();(wins||[]).forEach(w=>(w.cells||[]).forEach(p=>connected.add(p.r+','+p.c)));let max=1,count=0;grid.forEach((row,r)=>row.forEach((c,col)=>{if(c&&c.multiplier>0&&connected.has(r+','+col)){count++;max=Math.max(max,c.multiplier)}}));return{multiplier:max,count}}window.HorusMultiplierEngine={tier,resolve}})();
