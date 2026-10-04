@@ -1,20 +1,15 @@
-# Horus Super Win 1000
+# Horus Super Win 1000 — Physical Reel V5
 
-Demo slot virtual gratis, responsif untuk GitHub Pages.
+Patch only for `js/reel-engine.js`.
 
-## Perubahan build ini
-- Reel menggunakan strip vertikal yang benar-benar bergerak dengan acceleration/deceleration, staggered stop, blur, dan settle.
-- Teks ribbon "Normal Mode / Scatter Mode" dihapus dari mesin; mode dibedakan lewat visual, Horus, lighting, FX, dan audio.
-- Scatter mempunyai lifecycle baru: setiap pembelian membuat sesi Scatter baru, reset state sesi, menjalankan transformasi, lalu memulai Free Spin.
-- Buy Scatter kedua dan seterusnya tidak lagi hanya memotong kredit.
-- RNG putaran biasa diperketat: kombinasi menang normal membutuhkan 10+ simbol identik; Scatter tetap lebih longgar pada 8+.
-- Probabilitas Scatter dan multiplier diseimbangkan ulang; multiplier tinggi tetap jauh lebih langka.
-- Tumble/refill tetap dibatasi untuk mencegah loop tanpa akhir.
-- Credit/bet tetap virtual; kredit tidak boleh negatif dan reset demo tetap aktif di bawah Rp10.000.
-- Desktop: Horus di sisi kanan. Mobile: Horus di atas mesin.
+Changes:
+- Physical reel direction is now TOP -> BOTTOM on desktop and mobile.
+- All 5 columns start rolling together.
+- Column 1 stops first; columns 2-5 continue visibly rolling until their own stops.
+- No blank/empty reel is exposed during staggered stopping.
+- Fast -> slow -> stop remains per column.
+- Preserves V4 tumble logic and other game systems.
+- Includes the symbol centering fix during rolling/stopped states without changing mobile layout CSS.
 
-## GitHub Pages
-Upload isi folder build ini ke repository Pages. `index.html` harus berada di root folder yang dipublikasikan. Semua asset memakai relative path.
-
-## Catatan
-Game ini hanya demo kredit virtual; tidak menggunakan uang nyata, deposit, atau cash-out.
+Install this file as `js/reel-engine.js` over the V4 version.
+After deployment, hard refresh with Ctrl+Shift+R.
