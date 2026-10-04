@@ -26,7 +26,7 @@ HorusAudio.prototype.startReelRoll=function(mode='normal'){
   this.stopReelRoll();
   const folder=mode==='SCATTER'?'scatter':'normal';
   const a=this.file(`audio/${folder}/reel-roll.mp3`,true);
-  if(a)a.volume=0.13;
+  if(a)a.volume=0.35;
   this.reelRoll=a;
 };
 HorusAudio.prototype.stopReelRoll=function(){
