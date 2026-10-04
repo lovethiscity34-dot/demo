@@ -1,0 +1,61 @@
+/* HORUS FALCON HUMANOID — responsive character layer only.
+   Does not alter reel/game mechanics. */
+.horus-card{isolation:isolate;position:relative}
+.horus-card .ring{z-index:0}
+.horus-card .state-label,.horus-card #horusState{z-index:3}
+.horus-card #horusArt{
+  z-index:2;
+  display:block;
+  width:min(100%,390px);
+  height:min(44vh,340px);
+  margin:2px auto 0;
+  object-fit:contain;
+  object-position:center;
+  border-radius:16px;
+  filter:drop-shadow(0 12px 18px rgba(0,0,0,.45));
+  transform-origin:center 82%;
+  will-change:transform,filter;
+  animation:horusBreath 3.2s ease-in-out infinite;
+  transition:filter .28s ease,opacity .18s ease;
+}
+/* Normal state: subtle breathing/weight shift. */
+body[data-horus="idle"] #horusArt{animation:horusBreath 3.2s ease-in-out infinite}
+/* Spin: a small forward lean; visual only. */
+body[data-horus="spin"] #horusArt{animation:horusSpinReady .7s ease-in-out infinite alternate}
+/* Win: short celebratory lift. */
+body[data-horus="win"] #horusArt{animation:horusWinPose .8s ease-in-out infinite alternate;filter:drop-shadow(0 0 24px rgba(246,198,75,.52))}
+/* Big win / divine: stronger lift without moving layout. */
+body[data-horus="bigwin"] #horusArt,
+body[data-horus="ultimate"] #horusArt{animation:horusUltimate .9s ease-in-out infinite alternate;filter:drop-shadow(0 0 28px rgba(246,198,75,.7)) drop-shadow(0 0 45px rgba(53,217,255,.22))}
+/* Scatter: floating guardian stance. */
+body[data-horus="scatter"] #horusArt{animation:horusScatterFloat 1.8s ease-in-out infinite;filter:drop-shadow(0 0 25px rgba(53,217,255,.55)) drop-shadow(0 0 45px rgba(140,92,255,.24))}
+/* Prevent the character from making mobile cards too tall. */
+@media (max-width:850px){
+  .horus-card #horusArt{width:min(88vw,330px);height:calc(100% - 34px);max-height:150px;margin:auto}
+}
+@media (max-width:520px){
+  .horus-card #horusArt{width:min(78vw,300px);max-height:112px;border-radius:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  .horus-card #horusArt{animation:none!important;transition:none}
+}
+@keyframes horusBreath{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(0,-5px,0) scale(1.012)}
+}
+@keyframes horusSpinReady{
+  0%{transform:translate3d(0,0,0) rotate(-.7deg) scale(1)}
+  100%{transform:translate3d(3px,-4px,0) rotate(.7deg) scale(1.015)}
+}
+@keyframes horusWinPose{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  100%{transform:translate3d(0,-9px,0) scale(1.025)}
+}
+@keyframes horusUltimate{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  100%{transform:translate3d(0,-12px,0) scale(1.04)}
+}
+@keyframes horusScatterFloat{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(0,-10px,0) scale(1.025)}
+}
