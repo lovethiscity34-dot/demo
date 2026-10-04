@@ -9,13 +9,13 @@
       /* Physical reel stagger v3: rolling/blur is controlled per column. */
       .reels.rolling .reel-window.reel-active .cell{animation:none!important}
       .reels.rolling .reel-window.reel-active .reel-track{filter:blur(1.5px)}
-      .reels.rolling .reel-window.reel-active .cell img{filter:blur(1.1px) drop-shadow(0 7px 8px rgba(0,0,0,.45));transform:scaleY(1.08)}
+      .reels.rolling .reel-window.reel-active .cell img{filter:blur(1.1px) drop-shadow(0 7px 8px rgba(0,0,0,.45));transform:translate(-50%,-50%) scaleY(1.08)}
       .reels.rolling .reel-window.reel-slowing .cell{animation:none!important}
       .reels.rolling .reel-window.reel-slowing .reel-track{filter:blur(.7px)}
-      .reels.rolling .reel-window.reel-slowing .cell img{filter:blur(.55px) drop-shadow(0 7px 8px rgba(0,0,0,.45));transform:scaleY(1.04)}
+      .reels.rolling .reel-window.reel-slowing .cell img{filter:blur(.55px) drop-shadow(0 7px 8px rgba(0,0,0,.45));transform:translate(-50%,-50%) scaleY(1.04)}
       .reels.rolling .reel-window.reel-stopped .cell{animation:none!important}
       .reels.rolling .reel-window.reel-stopped .reel-track{filter:none!important}
-      .reels.rolling .reel-window.reel-stopped .cell img{filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))!important;transform:none!important}
+      .reels.rolling .reel-window.reel-stopped .cell img{filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))!important;transform:translate(-50%,-50%)!important}
       .reels.rolling .reel-window.reel-stopped{box-shadow:inset 0 0 10px rgba(53,217,255,.05)}
       .reels.rolling .reel-window.reel-slowing{box-shadow:inset 0 0 22px rgba(246,198,75,.10)}
     `;
@@ -34,12 +34,15 @@
   Reel.prototype.makeSpinColumn=function(finalCol,mode,count){
     const col=document.createElement('div'); col.className='reel-window reel-active';
     const track=document.createElement('div'); track.className='reel-track';
-    // Continuous strip: symbol -> symbol -> symbol, never a blank reel while rolling.
+    // Physical direction is TOP -> BOTTOM. Final symbols are placed first,
+    // above the viewport, then a continuous filler strip follows them.
+    // The track travels from a negative Y position toward 0, so symbols
+    // continuously enter from the TOP and leave through the BOTTOM.
+    finalCol.forEach((cell,i)=>track.appendChild(this.cell(cell,i,0)));
     for(let i=0;i<count;i++){
       const filler={id:this.symbols.weighted(mode),multiplier:mode==='SCATTER'?this.symbols.rollMultiplier():0};
-      track.appendChild(this.cell(filler,i,0));
+      track.appendChild(this.cell(filler,i,count));
     }
-    finalCol.forEach((cell,i)=>track.appendChild(this.cell(cell,i,count)));
     col.appendChild(track); return {col,track,count};
   };
 
@@ -56,27 +59,13 @@
   Reel.prototype.animate=function(grid,turbo,mode='NORMAL'){
     this.ensurePhysicalReelStyle();
 
-    /*
-     * PHYSICAL REEL V4
-     * -----------------
-     * The important difference from the previous versions is that there is
-     * ONE continuous motion loop per column. All five columns are moving at
-     * the same time. We do NOT let a column finish its whole animation while
-     * the others are changing state together.
-     *
-     * Timeline (normal):
-     *   0ms       : C1 C2 C3 C4 C5 all roll
-     *   ~1500ms   : C1 brakes -> stops, C2-C5 still roll
-     *   ~1800ms   : C2 brakes -> stops, C3-C5 still roll
-     *   ~2100ms   : C3 brakes -> stops, C4-C5 still roll
-     *   ~2400ms   : C4 brakes -> stops, C5 still rolls
-     *   ~2700ms   : C5 brakes -> stops
-     *
-     * Every reel owns its own blur state. Therefore a stopped reel becomes
-     * perfectly sharp while the next reels remain visibly blurred/moving.
+    /* PHYSICAL REEL V5
+     * All reels start together and move continuously TOP -> BOTTOM.
+     * Each later reel receives a longer cruise phase, so it is still visibly
+     * rolling while the previous reel has already stopped. No blank reel is
+     * shown between stops.
      */
-    const count=turbo?34:42;
-    const pitchGapFallback=6;
+    const count=turbo?42:52;
     const cruiseMs=turbo?1050:1450;
     const stopGap=turbo?190:300;
     const decelMs=turbo?260:430;
@@ -107,67 +96,60 @@
           const reelWindow=this.columns[c].col;
           const first=track.querySelector('.cell');
           const cs=getComputedStyle(track);
-          const gap=parseFloat(cs.rowGap||cs.gap||'')||parseFloat(cs.columnGap||'')||pitchGapFallback;
+          const gap=parseFloat(cs.rowGap||cs.gap||'')||parseFloat(cs.columnGap||'')||6;
           const pitch=first ? first.getBoundingClientRect().height+gap : 0;
           if(!pitch){jobs.push(Promise.resolve());return;}
 
-          /*
-           * All reels use the same physical cruise speed. The only difference
-           * is WHEN braking starts. This is what makes C2-C5 continue rolling
-           * while C1 is already stopped.
-           */
-          const stopDelay=c*stopGap;
-          const cruiseDistance=Math.max(pitch*12,Math.round(cruiseMs*speed));
+          // Start far enough above the viewport that there is always a full
+          // stream of symbols while the reel is travelling downward.
+          const cruiseDistance=Math.max(pitch*18,Math.round(cruiseMs*speed));
           const decelDistance=Math.max(pitch*3,Math.round(decelMs*speed*.92));
           const totalDistance=cruiseDistance+decelDistance;
+          const startY=-totalDistance;
+          const cruiseY=-(decelDistance);
+          const endY=0;
+          const stopDelay=c*stopGap;
 
           reelWindow.classList.remove('reel-slowing','reel-stopped');
           reelWindow.classList.add('reel-active');
           track.classList.add('spinning');
 
-          /*
-           * The strip contains enough real cells to cover the complete path.
-           * We deliberately leave a generous tail so there can never be an
-           * empty window while a later reel is still spinning.
-           */
-          const required=Math.ceil(totalDistance/pitch)+HorusConfig.ROWS+4;
+          // Extend the filler strip so no later reel can ever expose an empty
+          // area before its own stop.
+          const required=Math.ceil(totalDistance/pitch)+HorusConfig.ROWS+6;
           while(track.children.length<required){
             const item={id:this.symbols.weighted(mode),multiplier:mode==='SCATTER'?this.symbols.rollMultiplier():0};
-            track.insertBefore(this.cell(item,0,c),track.lastElementChild);
+            track.appendChild(this.cell(item,0,c));
           }
 
-          const cruise=()=>track.animate(
+          // Initial position is ABOVE the window. Positive Y movement brings
+          // symbols DOWN through the viewport, exactly like the requested
+          // physical slot direction.
+          track.style.transform=`translate3d(0,${startY}px,0)`;
+
+          const cruise=track.animate(
             [
-              {transform:'translate3d(0,0,0)'},
-              {transform:`translate3d(0,-${cruiseDistance}px,0)`}
+              {transform:`translate3d(0,${startY}px,0)`},
+              {transform:`translate3d(0,${cruiseY}px,0)`}
             ],
             {duration:cruiseMs+stopDelay,easing:'linear',fill:'forwards',iterations:1}
           );
-
-          /*
-           * All reels are launched immediately. For C2-C5 the linear phase is
-           * simply longer. There is NO pause and NO blank frame between phases.
-           */
-          const cruiseAnim=cruise();
 
           const job=new Promise(done=>{
             setTimeout(()=>{
               reelWindow.classList.remove('reel-active');
               reelWindow.classList.add('reel-slowing');
 
-              const decelStart=`translate3d(0,-${cruiseDistance}px,0)`;
-              const decelEnd=`translate3d(0,-${totalDistance}px,0)`;
               const decel=track.animate(
                 [
-                  {transform:decelStart},
-                  {transform:decelEnd}
+                  {transform:`translate3d(0,${cruiseY}px,0)`},
+                  {transform:`translate3d(0,${endY}px,0)`}
                 ],
                 {duration:decelMs,easing:stopEase,fill:'forwards',iterations:1}
               );
 
               decel.finished.then(()=>{
-                /* Snap only this reel. Other reels are untouched. */
-                track.style.transform=decelEnd;
+                track.style.transform=`translate3d(0,${endY}px,0)`;
                 track.classList.remove('spinning');
                 reelWindow.classList.remove('reel-slowing','reel-active');
                 reelWindow.classList.add('reel-stopped');
