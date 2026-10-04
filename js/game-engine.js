@@ -11,7 +11,7 @@
     this.audio.sfx('reel-start',mode==='SCATTER'?'scatter':'normal');
     if(mode==='SCATTER'){this.audio.scatterMode();this.horus.set('ULTIMATE • SPIN')}else{this.audio.normalBgm();this.horus.set('GUARDIAN • SPIN')}
     this.ui.update(); this.grid=this.symbols.randomGrid(mode); this.setState(HorusGameState.ROLLING);
-    await this.reels.animate(this.grid,this.turbo,mode); this.audio.sfx('reel-stop','normal'); this.setState(HorusGameState.RESULT);
+    await this.reels.animate(this.grid,this.turbo,mode); this.audio.sfx('reel-stop',mode==='SCATTER'?'scatter':'normal'); this.setState(HorusGameState.RESULT);
     const scatterCount=this.wins.scatterCount(this.grid); const win=await this.tumble.run(this.grid,mode); let payout=win;
     if(mode==='SCATTER'){
       const m=HorusMultiplierEngine.resolve(this.grid); this.multiplier=m.multiplier;

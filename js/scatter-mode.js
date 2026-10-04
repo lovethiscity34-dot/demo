@@ -6,6 +6,7 @@
     this.game.mode='SCATTER'; this.game.multiplier=1;
     this.game.setState(HorusGameState.SCATTER_TRANSITION);
     document.body.dataset.scatter='entering';
+    document.body.dataset.mode='SCATTER';
     this.game.audio.sfx('scatter-trigger','scatter'); this.game.audio.scatterMode();
     this.game.horus.set('ULTIMATE • AWAKENED'); this.game.ui.update();
     return this.game.wait(this.game.turbo?500:1050).then(()=>{document.body.dataset.scatter='active';this.game.ui.update()});
