@@ -4,9 +4,6 @@ Tumble.prototype.run=async function(grid,mode){
   this.lastWinningMultipliers=[];for(let round=0;round<HorusConfig.MAX_TUMBLE_ROUNDS;round++){
   this.game.setState(HorusGameState.WIN_CHECK);const wins=this.game.wins.find(grid,mode);if(!wins.length)break;
   this.game.ui.markWins(wins);
-  // Trigger the connect sound at the exact moment winning symbols begin their glow/highlight animation.
-  // This intentionally happens before the visible win-hold delay and before removal/tumble.
-  this.game.audio.sfx('symbol-win',mode==='SCATTER'?'scatter':'normal',mode==='SCATTER'?.42:.40);
   if(mode==='SCATTER'){
     wins.forEach(w=>w.cells.forEach(p=>{
       const cell=grid[p.r]&&grid[p.r][p.c];
