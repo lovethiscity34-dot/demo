@@ -1,17 +1,11 @@
-Horus Super Win 1000 - BGM Patch
+# Horus Super Win 1000 — Scatter/Multiplier Patch
+Targeted patch for the latest `demo-main.zip`.
 
-Replace:
-  js/audio/audio-engine.js
-
-Add:
-  audio/normal/normal-bg.mp3
-  audio/scatter/scatter-bg.mp3
-
-Behavior:
-- Normal BGM loops continuously.
-- Entering Scatter stops Normal and starts Scatter from the beginning.
-- Scatter BGM loops continuously while Scatter is active.
-- Returning to Normal stops Scatter and resumes Normal.
-- Existing SFX routing is preserved.
-
-After uploading to GitHub Pages, hard-refresh with Ctrl+Shift+R.
+Changes:
+- Multiplier is counted only when its symbol cell is part of a valid connected win during Scatter tumble.
+- Invalid/unconnected multipliers produce no history, no notification, and no multiplier payout effect.
+- Replaced bottom-toast multiplier notification with an integrated reel-area visual.
+- Replaced Scatter activation/retrigger bottom toast with an integrated reel-area visual.
+- Scatter retrigger formula: 4–5 = +15, 6–7 = +20, 8–9 = +25, then +5 per two additional Scatter symbols.
+- Retrigger can repeat during the same Scatter session.
+- Existing reel/centering/audio/tumble/7-connect code is otherwise left untouched.
