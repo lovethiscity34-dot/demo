@@ -13,6 +13,8 @@
   Reel.prototype.makeSpinColumn=function(finalCol,mode,count){
     const col=document.createElement('div'); col.className='reel-window';
     const track=document.createElement('div'); track.className='reel-track';
+    // A continuous strip: filler symbols are immediately followed by the final
+    // five symbols, so the viewport is never empty during the roll.
     for(let i=0;i<count;i++){
       const filler={id:this.symbols.weighted(mode),multiplier:mode==='SCATTER'?this.symbols.rollMultiplier():0};
       track.appendChild(this.cell(filler,i,0));
@@ -45,12 +47,12 @@
       made.track.style.setProperty('--spin-delay',`${c*stagger}ms`);
     }
 
+    // Measure the actual rendered pitch. This avoids the last-frame jump caused
+    // by estimating the distance as a percentage when CSS gaps are present.
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       this.columns.forEach(({track,count})=>{
         const first=track.querySelector('.cell');
-        const cs=getComputedStyle(track);
-        const gap=parseFloat(cs.rowGap || cs.gap || '0') || 0;
-        const pitch=first?first.getBoundingClientRect().height + gap:0;
+        const pitch=first?first.getBoundingClientRect().height + parseFloat(getComputedStyle(track).rowGap || getComputedStyle(track).gap || '0'):0;
         const distance=Math.max(0,count*pitch);
         track.style.setProperty('--spin-distance',`${distance}px`);
         track.style.transform='translate3d(0,0,0)';
@@ -64,6 +66,8 @@
     const total=duration+stagger*(HorusConfig.COLS-1)+settle+60;
     return new Promise(res=>setTimeout(()=>{
       this.running=false;
+      // Render only after the slow settle phase has completed. The reel therefore
+      // lands visually on the final symbols instead of snapping while still moving.
       this.render(grid); res();
     },total));
   };
