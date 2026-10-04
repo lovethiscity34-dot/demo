@@ -1,7 +1,7 @@
 (function(){
   function Wins(){}
   Wins.prototype.find=function(grid,mode){
-    const out=[],counts={},needed=8;
+    const out=[],counts={},needed=7;
     for(let r=0;r<HorusConfig.ROWS;r++)for(let c=0;c<HorusConfig.COLS;c++){
       const cell=grid[r][c];
       if(!cell||cell.id==='scatter')continue;
