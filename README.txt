@@ -1,29 +1,30 @@
-HORUS SUPER WIN 1000 — UPDATE PATCH
+HORUS SUPER WIN 1000 — SCATTER RESULT FIXED PATCH
 
-Ganti/timpa hanya file berikut dari project FINAL-V2:
+PENTING: Patch ini dibuat dari UPDATE-PATCH yang sudah memiliki:
+- loading screen + asset preload
+- layout reel 5x5
+- konfirmasi BELI SCATTER (X / ✓)
+- responsive viewport
+- reel continuous strip + slow stop
 
-index.html
-css/core.css
-js/config.js
-js/reel-engine.js
-js/scatter-mode.js
-js/game-engine.js
-js/main.js
+File yang diganti:
+- index.html
+- css/core.css
+- css/scatter-result.css (BARU)
+- js/reel-engine.js
+- js/tumble-engine.js
+- js/game-engine.js
+- js/main.js
 
-JANGAN upload ulang assets/ atau audio/.
+Tidak perlu mengganti asset, audio, config, symbol-engine, scatter-mode, atau file lain.
 
-Perubahan:
-- Grid reel menjadi 5x5.
-- Continuous reel strip tetap digunakan; tidak ada ruang kosong saat rolling.
-- Fase akhir rolling diperhalus dengan deceleration dan staggered stop yang benar.
-- Fix timing stop reel agar tidak render hasil terlalu cepat sebelum reel terakhir selesai.
-- Loading screen Horus.
-- Desktop/mobile dibuat satu viewport tanpa scroll.
-- Kontrol mobile dipusatkan.
-- Label Normal Mode / Scatter Mode disembunyikan.
-- Scatter background menjadi merah saat Scatter aktif.
-- Modal konfirmasi Buy Scatter dengan harga, tombol X dan ✓.
-- Buy Scatter tetap memakai lifecycle Scatter yang sudah ada dan dapat dibeli berulang.
-- Aturan UI diperbarui menjadi 5x5.
+Perubahan baru:
+- Menampilkan TOTAL KEMENANGAN setelah Scatter terakhir selesai.
+- Menampilkan jumlah Free Spin yang dimainkan.
+- Menampilkan multiplier tertinggi selama sesi Scatter.
+- Total Scatter menghitung payout setelah multiplier.
+- Setelah tombol LANJUT, game kembali ke Normal.
+- Kode loading screen dan modal beli Scatter dipertahankan.
+- CSS reel 5x5 dan patch reel sebelumnya dipertahankan.
 
-Setelah mengganti file, lakukan hard refresh (Ctrl+F5).
+Pasang dengan cara menimpa file sesuai struktur folder.
