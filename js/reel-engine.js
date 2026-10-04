@@ -16,6 +16,13 @@
       .reels.rolling .reel-window.reel-stopped .cell{animation:none!important}
       .reels.rolling .reel-window.reel-stopped .reel-track{filter:none!important}
       .reels.rolling .reel-window.reel-stopped .cell img{filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))!important;transform:translate(-50%,-50%)!important}
+      /* Mobile/tablet cells use normal grid centering, so do not apply the desktop
+         absolute-position translate(-50%,-50%) correction there. */
+      @media (max-width:850px){
+        .reels.rolling .reel-window.reel-active .cell img{transform:scaleY(1.08)!important}
+        .reels.rolling .reel-window.reel-slowing .cell img{transform:scaleY(1.04)!important}
+        .reels.rolling .reel-window.reel-stopped .cell img{transform:none!important}
+      }
       .reels.rolling .reel-window.reel-stopped{box-shadow:inset 0 0 10px rgba(53,217,255,.05)}
       .reels.rolling .reel-window.reel-slowing{box-shadow:inset 0 0 22px rgba(246,198,75,.10)}
     `;
