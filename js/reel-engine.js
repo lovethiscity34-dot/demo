@@ -1,6 +1,27 @@
 (function(){
   function Reel(symbols){this.symbols=symbols;this.root=document.querySelector('#reels');this.columns=[];this.running=false}
 
+  Reel.prototype.ensurePhysicalReelStyle=function(){
+    if(document.getElementById('horus-physical-reel-v3'))return;
+    const style=document.createElement('style');
+    style.id='horus-physical-reel-v3';
+    style.textContent=`
+      /* Physical reel stagger v3: rolling/blur is controlled per column. */
+      .reels.rolling .reel-window.reel-active .cell{animation:none!important}
+      .reels.rolling .reel-window.reel-active .reel-track{filter:blur(1.5px)}
+      .reels.rolling .reel-window.reel-active .cell img{filter:blur(1.1px) drop-shadow(0 7px 8px rgba(0,0,0,.45));transform:scaleY(1.08)}
+      .reels.rolling .reel-window.reel-slowing .cell{animation:none!important}
+      .reels.rolling .reel-window.reel-slowing .reel-track{filter:blur(.7px)}
+      .reels.rolling .reel-window.reel-slowing .cell img{filter:blur(.55px) drop-shadow(0 7px 8px rgba(0,0,0,.45));transform:scaleY(1.04)}
+      .reels.rolling .reel-window.reel-stopped .cell{animation:none!important}
+      .reels.rolling .reel-window.reel-stopped .reel-track{filter:none!important}
+      .reels.rolling .reel-window.reel-stopped .cell img{filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))!important;transform:none!important}
+      .reels.rolling .reel-window.reel-stopped{box-shadow:inset 0 0 10px rgba(53,217,255,.05)}
+      .reels.rolling .reel-window.reel-slowing{box-shadow:inset 0 0 22px rgba(246,198,75,.10)}
+    `;
+    document.head.appendChild(style);
+  };
+
   Reel.prototype.cell=function(cell,r,c){
     const s=this.symbols.get(cell.id); const d=document.createElement('div'); d.className='cell';
     d.dataset.r=r; d.dataset.c=c; d.dataset.id=s.id;
@@ -11,7 +32,7 @@
   };
 
   Reel.prototype.makeSpinColumn=function(finalCol,mode,count){
-    const col=document.createElement('div'); col.className='reel-window';
+    const col=document.createElement('div'); col.className='reel-window reel-active';
     const track=document.createElement('div'); track.className='reel-track';
     // Continuous strip: symbol -> symbol -> symbol, never a blank reel while rolling.
     for(let i=0;i<count;i++){
@@ -33,14 +54,15 @@
   };
 
   Reel.prototype.animate=function(grid,turbo,mode='NORMAL'){
+    this.ensurePhysicalReelStyle();
     const count=turbo?22:30;
     // Semua kolom mulai bersamaan. Perbedaan hanya pada berapa lama fase cruise
     // berlangsung; kolom berikutnya melakukan 1 putaran ekstra sehingga tetap bergerak
     // saat kolom sebelumnya sudah masuk fase deselerasi.
-    const decelMs=turbo?210:320;
-    const settle=turbo?110:220;
+    const decelMs=turbo?240:420;
+    const settle=turbo?100:180;
     const stopEase='cubic-bezier(.08,.72,.16,1)';
-    const spinSpeed=turbo?1.35:1.15;
+    const spinSpeed=turbo?1.35:0.92;
 
     this.root.innerHTML=''; this.root.classList.add('rolling'); this.columns=[]; this.running=true;
     for(let c=0;c<HorusConfig.COLS;c++){
@@ -70,6 +92,13 @@
           const cruiseDistance=Math.max(pitch,totalDistance-decelDistance);
           const cruiseDuration=Math.max(760,Math.round(cruiseDistance/spinSpeed));
 
+          // Setiap reel punya status visual sendiri. Ini penting agar setelah
+          // column 1 berhenti, blur/rolling column 1 langsung hilang sementara
+          // column 2-5 tetap terlihat benar-benar bergerak.
+          const reelWindow=this.columns[c].col;
+          reelWindow.classList.add('reel-active');
+          reelWindow.classList.remove('reel-slowing','reel-stopped');
+
           track.style.setProperty('--spin-distance',`${totalDistance}px`);
           track.style.setProperty('--spin-duration',`${cruiseDuration+decelMs}ms`);
           track.style.setProperty('--spin-delay','0ms');
@@ -86,6 +115,11 @@
 
           // Fase 2 — hanya setelah cruise masing-masing selesai, column masuk fast→slow.
           const finish=cruise.finished.then(()=>{
+            // Hanya reel yang akan berhenti yang masuk fase slow-down.
+            // Reel setelahnya tetap dalam cruise penuh sampai gilirannya.
+            reelWindow.classList.remove('reel-active');
+            reelWindow.classList.add('reel-slowing');
+
             const decel=track.animate(
               [
                 {transform:`translate3d(0,-${cruiseDistance}px,0)`},
@@ -93,7 +127,14 @@
               ],
               {duration:decelMs,easing:stopEase,fill:'forwards',iterations:1}
             );
-            return decel.finished.catch(()=>null);
+            return decel.finished.then(()=>{
+              // Reel benar-benar sudah terkunci. Hapus blur hanya dari reel ini,
+              // bukan dari seluruh machine.
+              track.style.transform=`translate3d(0,-${totalDistance}px,0)`;
+              track.classList.remove('spinning');
+              reelWindow.classList.remove('reel-slowing','reel-active');
+              reelWindow.classList.add('reel-stopped');
+            }).catch(()=>null);
           }).catch(()=>null);
 
           finishPromises.push(finish);
