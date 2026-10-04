@@ -34,60 +34,81 @@
 
   Reel.prototype.animate=function(grid,turbo,mode='NORMAL'){
     const count=turbo?22:30;
-    // Semua kolom MULAI bersamaan. Perbedaan hanya terjadi pada waktu STOP.
-    const baseDuration=turbo?Math.max(620,HorusConfig.TURBO_REEL_ROLL_DURATION):Math.max(1350,HorusConfig.REEL_ROLL_DURATION);
-    const stopStagger=turbo?Math.max(80,HorusConfig.TURBO_REEL_STOP_STAGGER):Math.max(150,HorusConfig.REEL_STOP_STAGGER);
-    const settle=turbo?Math.max(110,HorusConfig.REEL_SETTLE):Math.max(220,HorusConfig.REEL_SETTLE);
-    const stopEase='cubic-bezier(.08,.70,.18,1)';
+    // Semua kolom mulai bersamaan. Perbedaan hanya pada berapa lama fase cruise
+    // berlangsung; kolom berikutnya melakukan 1 putaran ekstra sehingga tetap bergerak
+    // saat kolom sebelumnya sudah masuk fase deselerasi.
+    const decelMs=turbo?210:320;
+    const settle=turbo?110:220;
+    const stopEase='cubic-bezier(.08,.72,.16,1)';
+    const spinSpeed=turbo?1.35:1.15;
 
     this.root.innerHTML=''; this.root.classList.add('rolling'); this.columns=[]; this.running=true;
     for(let c=0;c<HorusConfig.COLS;c++){
       const made=this.makeSpinColumn(grid.map(row=>row[c]),mode,count);
       this.root.appendChild(made.col); this.columns.push(made);
-      // Matikan transition lama per kolom. Animasi spin dikendalikan langsung oleh WAAPI
-      // agar seluruh kolom mulai bersamaan tetapi selesai secara berurutan.
       made.track.style.transition='none';
       made.track.style.transform='translate3d(0,0,0)';
     }
 
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      const animations=[];
-      this.columns.forEach(({track,count},c)=>{
-        const first=track.querySelector('.cell');
-        const cs=getComputedStyle(track);
-        const gap=parseFloat(cs.rowGap||cs.gap||'0')||0;
-        const pitch=first?first.getBoundingClientRect().height+gap:0;
-        const distance=Math.max(0,count*pitch);
-        const duration=baseDuration + c*stopStagger;
+    return new Promise(resolve=>{
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        const finishPromises=[];
 
-        track.style.setProperty('--spin-distance',`${distance}px`);
-        track.style.setProperty('--spin-duration',`${duration}ms`);
-        track.style.setProperty('--spin-delay','0ms');
-        track.classList.add('spinning');
+        this.columns.forEach(({track,count},c)=>{
+          const first=track.querySelector('.cell');
+          const cs=getComputedStyle(track);
+          const gap=parseFloat(cs.rowGap||cs.gap||'0')||0;
+          const pitch=first?first.getBoundingClientRect().height+gap:0;
+          if(!pitch){finishPromises.push(Promise.resolve());return}
 
-        // Semua animation.play() dipanggil pada frame yang sama.
-        // Column 1 selesai dulu, lalu column 2, dst.
-        const anim=track.animate(
-          [
-            {transform:'translate3d(0,0,0)'},
-            {transform:`translate3d(0,-${distance}px,0)`}
-          ],
-          {duration,easing:stopEase,fill:'forwards',iterations:1}
-        );
-        animations.push(anim);
-      });
+          const baseDistance=count*pitch;
+          // Setiap column berikutnya mendapat satu siklus simbol ekstra.
+          // Karena kecepatannya sama, semua mulai bersama tetapi stop terlihat berurutan.
+          const extraCycles=c;
+          const totalDistance=baseDistance + extraCycles*(HorusConfig.ROWS*pitch);
+          const decelDistance=Math.max(pitch*2.5,Math.min(pitch*3.5,totalDistance-pitch));
+          const cruiseDistance=Math.max(pitch,totalDistance-decelDistance);
+          const cruiseDuration=Math.max(760,Math.round(cruiseDistance/spinSpeed));
 
-      Promise.all(animations.map(a=>a.finished.catch(()=>null))).then(()=>{
-        this.root.classList.remove('rolling');
-      });
-    }));
+          track.style.setProperty('--spin-distance',`${totalDistance}px`);
+          track.style.setProperty('--spin-duration',`${cruiseDuration+decelMs}ms`);
+          track.style.setProperty('--spin-delay','0ms');
+          track.classList.add('spinning');
 
-    const total=baseDuration+stopStagger*(HorusConfig.COLS-1)+settle+80;
-    return new Promise(res=>setTimeout(()=>{
-      this.running=false;
-      this.render(grid);
-      res();
-    },total));
+          // Fase 1 — semua column bergerak bersamaan dengan kecepatan konstan.
+          const cruise=track.animate(
+            [
+              {transform:'translate3d(0,0,0)'},
+              {transform:`translate3d(0,-${cruiseDistance}px,0)`}
+            ],
+            {duration:cruiseDuration,easing:'linear',fill:'forwards',iterations:1}
+          );
+
+          // Fase 2 — hanya setelah cruise masing-masing selesai, column masuk fast→slow.
+          const finish=cruise.finished.then(()=>{
+            const decel=track.animate(
+              [
+                {transform:`translate3d(0,-${cruiseDistance}px,0)`},
+                {transform:`translate3d(0,-${totalDistance}px,0)`}
+              ],
+              {duration:decelMs,easing:stopEase,fill:'forwards',iterations:1}
+            );
+            return decel.finished.catch(()=>null);
+          }).catch(()=>null);
+
+          finishPromises.push(finish);
+        });
+
+        Promise.all(finishPromises).then(()=>{
+          this.root.classList.remove('rolling');
+          setTimeout(()=>{
+            this.running=false;
+            this.render(grid);
+            resolve();
+          },settle);
+        });
+      }));
+    });
   };
 
   /*
