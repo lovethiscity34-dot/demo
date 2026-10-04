@@ -1,15 +1,15 @@
-# Horus Super Win 1000 — Physical Reel V5
+# Horus Super Win 1000 — Physical Reel V6
 
-Patch only for `js/reel-engine.js`.
+Patch for the V5 physical reel.
 
-Changes:
-- Physical reel direction is now TOP -> BOTTOM on desktop and mobile.
-- All 5 columns start rolling together.
-- Column 1 stops first; columns 2-5 continue visibly rolling until their own stops.
-- No blank/empty reel is exposed during staggered stopping.
-- Fast -> slow -> stop remains per column.
-- Preserves V4 tumble logic and other game systems.
-- Includes the symbol centering fix during rolling/stopped states without changing mobile layout CSS.
+## Fix
+- Desktop centering is preserved exactly as in V5.
+- Mobile/tablet symbols are centered using the existing grid centering.
+- Removes the desktop `translate(-50%, -50%)` correction on screens <= 850px, which was shifting mobile symbols off-center.
+- Rolling direction, staggered stopping, continuous symbols, tumble, 5x5, 8-connect, Scatter and all other game logic are untouched.
 
-Install this file as `js/reel-engine.js` over the V4 version.
-After deployment, hard refresh with Ctrl+Shift+R.
+## Install
+Replace only:
+`js/reel-engine.js`
+
+Do not replace the CSS files. After deployment, hard refresh with Ctrl+Shift+R.
