@@ -169,46 +169,8 @@ body[data-mode="SCATTER"] .reel-vfx{display:none!important}
     transform:translate(-50%,-50%) scaleY(1.04)!important;
   }
 }
+/* BET +/- CENTER — additive only; existing CSS above is preserved. */
+.bet{display:grid;place-items:center;padding:0;line-height:1;text-align:center;vertical-align:middle;flex:0 0 auto}
+@media(max-width:850px){.bet{display:grid;place-items:center;padding:0;line-height:1}}
+@media(max-width:520px){.bet{display:grid;place-items:center;padding:0;line-height:1}}
 
-/* BET BUTTON CENTER FIX — visual only, preserves all game mechanics */
-.spin-wrap{
-  justify-content:center;
-  align-items:center;
-  justify-self:center;
-  width:max-content;
-  margin-inline:auto;
-}
-.bet{
-  display:inline-grid;
-  place-items:center;
-  flex:0 0 auto;
-  padding:0;
-  line-height:1;
-  text-align:center;
-  vertical-align:middle;
-}
-@media(max-width:850px){
-  .spin-wrap{
-    justify-content:center;
-    align-items:center;
-    justify-self:center;
-    margin-inline:auto;
-  }
-  .bet{
-    display:inline-grid;
-    place-items:center;
-    padding:0;
-    line-height:1;
-  }
-}
-@media(max-width:520px){
-  .spin-wrap{
-    gap:5px;
-  }
-  .bet{
-    display:inline-grid;
-    place-items:center;
-    padding:0;
-    line-height:1;
-  }
-}
