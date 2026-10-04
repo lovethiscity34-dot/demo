@@ -1,7 +1,8 @@
 (function(){function Tumble(game){this.game=game}
 Tumble.prototype.run=async function(grid,mode){let total=0;for(let round=0;round<HorusConfig.MAX_TUMBLE_ROUNDS;round++){
   this.game.setState(HorusGameState.WIN_CHECK);const wins=this.game.wins.find(grid,mode);if(!wins.length)break;
-  this.game.ui.markWins(wins);this.game.audio.sfx('connect',mode==='SCATTER'?'scatter':'normal');this.game.setState(HorusGameState.WIN_PRESENT);
+  this.game.audio.sfx('symbol-win',mode==='SCATTER'?'scatter':'normal',mode==='SCATTER'?0.38:0.36);
+  this.game.ui.markWins(wins);this.game.setState(HorusGameState.WIN_PRESENT);
   // Keep the connected symbols visible long enough to read the result.
   await this.game.wait(this.game.turbo?520:820);
   const payout=this.game.wins.payout(wins,this.game.bet.value);total+=payout;this.game.totalWin+=payout;this.game.ui.addHistory(`${mode==='SCATTER'?'SCATTER':'WIN'} • ${wins.length} Kombinasi`,payout);

@@ -10,27 +10,16 @@ HorusAudio.prototype.init=function(){
   if(this.ctx)return;
   try{this.ctx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}
 };
-HorusAudio.prototype.file=function(path,loop=false){
+HorusAudio.prototype.file=function(path,loop=false,volume=.28){
   if(!this.enabled)return null;
   const a=new window.Audio(path);
   a.loop=loop;
-  a.volume=.28;
+  a.volume=volume;
   a.play().catch(()=>{});
   return a
 };
 HorusAudio.prototype.stop=function(a){
   if(a){a.pause();a.currentTime=0}
-};
-HorusAudio.prototype.startReelRoll=function(mode='normal'){
-  if(!this.enabled)return;
-  this.stopReelRoll();
-  const folder=mode==='SCATTER'?'scatter':'normal';
-  const a=this.file(`audio/${folder}/reel-roll.mp3`,true);
-  if(a)a.volume=0.35;
-  this.reelRoll=a;
-};
-HorusAudio.prototype.stopReelRoll=function(){
-  if(this.reelRoll){this.stop(this.reelRoll);this.reelRoll=null}
 };
 HorusAudio.prototype.normalBgm=function(){
   if(!this.enabled)return;
@@ -52,8 +41,14 @@ HorusAudio.prototype.scatterMode=function(){
     this.scatterBgm=this.file('audio/scatter/scatter-bg.mp3',true)
   }
 };
-HorusAudio.prototype.sfx=function(name,mode='normal'){
-  if(this.enabled)this.file(`audio/${mode}/${name}.mp3`)
+HorusAudio.prototype.startReelRoll=function(mode='normal'){
+  if(!this.enabled)return;
+  this.stop(this.reelRoll);
+  this.reelRoll=this.file(`audio/${mode}/reel-roll.mp3`,true,mode==='scatter'?0.34:0.36);
+};
+HorusAudio.prototype.stopReelRoll=function(){this.stop(this.reelRoll);this.reelRoll=null};
+HorusAudio.prototype.sfx=function(name,mode='normal',volume=.32){
+  if(this.enabled)this.file(`audio/${mode}/${name}.mp3`,false,volume)
 };
 HorusAudio.prototype.setEnabled=function(v){
   this.enabled=v;

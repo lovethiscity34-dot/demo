@@ -8,17 +8,10 @@
     if(this.busy)return; if(!free&&!this.credit.canAfford(this.bet.value)){this.ui.toast('Kredit tidak cukup untuk taruhan ini.');return}
     this.busy=true; this.mode=mode; this.setState(free?HorusGameState.SCATTER_SPIN:HorusGameState.SPIN_START);
     if(!free)this.credit.spend(this.bet.value);
-    const audioMode=mode==='SCATTER'?'scatter':'normal';
-    this.audio.sfx('reel-start',audioMode);
-    this.audio.startReelRoll(mode);
+    this.audio.startReelRoll(mode==='SCATTER'?'scatter':'normal');
     if(mode==='SCATTER'){this.audio.scatterMode();this.horus.set('ULTIMATE • SPIN')}else{this.audio.normalBgm();this.horus.set('GUARDIAN • SPIN')}
     this.ui.update(); this.grid=this.symbols.randomGrid(mode); this.setState(HorusGameState.ROLLING);
-    try{
-      await this.reels.animate(this.grid,this.turbo,mode);
-    }finally{
-      this.audio.stopReelRoll();
-    }
-    this.audio.sfx('reel-stop',audioMode); this.setState(HorusGameState.RESULT);
+    await this.reels.animate(this.grid,this.turbo,mode); this.audio.stopReelRoll(); this.audio.sfx('reel-stop',mode==='SCATTER'?'scatter':'normal'); this.setState(HorusGameState.RESULT);
     const scatterCount=this.wins.scatterCount(this.grid); const win=await this.tumble.run(this.grid,mode); let payout=win;
     if(mode==='SCATTER'){
       const m=HorusMultiplierEngine.resolve(this.grid); this.multiplier=m.multiplier; this.scatterMaxMultiplier=Math.max(this.scatterMaxMultiplier,m.multiplier||1);
