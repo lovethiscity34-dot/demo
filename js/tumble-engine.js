@@ -3,7 +3,7 @@ Tumble.prototype.run=async function(grid,mode){
   let total=0;
   this.lastWinningMultipliers=[];for(let round=0;round<HorusConfig.MAX_TUMBLE_ROUNDS;round++){
   this.game.setState(HorusGameState.WIN_CHECK);const wins=this.game.wins.find(grid,mode);if(!wins.length)break;
-  this.game.ui.markWins(wins);
+  this.game.ui.markWins(wins);this.game.audio.sfx('symbol-win',mode==='SCATTER'?'scatter':'normal');
   if(mode==='SCATTER'){
     wins.forEach(w=>w.cells.forEach(p=>{
       const cell=grid[p.r]&&grid[p.r][p.c];
