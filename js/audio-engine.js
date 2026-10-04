@@ -1,1 +1,54 @@
-(function(){function HorusAudio(){this.enabled=true;this.ctx=null;this.bgm=null;this.scatterBgm=null}HorusAudio.prototype.init=function(){if(this.ctx)return;try{this.ctx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}};HorusAudio.prototype.file=function(path,loop=false){if(!this.enabled)return null;const a=new window.Audio(path);a.loop=loop;a.volume=.28;a.play().catch(()=>{});return a};HorusAudio.prototype.stop=function(a){if(a){a.pause();a.currentTime=0}};HorusAudio.prototype.normalBgm=function(){if(!this.enabled)return;this.stop(this.scatterBgm);if(this.bgm)this.bgm.play().catch(()=>{});else this.bgm=this.file('audio/normal/bgm-normal.mp3',true)};HorusAudio.prototype.scatterMode=function(){if(!this.enabled)return;this.stop(this.bgm);if(this.scatterBgm)this.scatterBgm.play().catch(()=>{});else this.scatterBgm=this.file('audio/scatter/bgm-scatter.mp3',true)};HorusAudio.prototype.sfx=function(name,mode='normal'){if(this.enabled)this.file(`audio/${mode}/${name}.mp3`)};HorusAudio.prototype.setEnabled=function(v){this.enabled=v;if(!v){this.stop(this.bgm);this.stop(this.scatterBgm)}};window.HorusAudioEngine=HorusAudio})();
+(function(){
+function HorusAudio(){
+  this.enabled=true;
+  this.ctx=null;
+  this.bgm=null;
+  this.scatterBgm=null
+}
+HorusAudio.prototype.init=function(){
+  if(this.ctx)return;
+  try{this.ctx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}
+};
+HorusAudio.prototype.file=function(path,loop=false){
+  if(!this.enabled)return null;
+  const a=new window.Audio(path);
+  a.loop=loop;
+  a.volume=.28;
+  a.play().catch(()=>{});
+  return a
+};
+HorusAudio.prototype.stop=function(a){
+  if(a){a.pause();a.currentTime=0}
+};
+HorusAudio.prototype.normalBgm=function(){
+  if(!this.enabled)return;
+  this.stop(this.scatterBgm);
+  if(this.bgm){
+    this.bgm.loop=true;
+    this.bgm.play().catch(()=>{});
+  }else{
+    this.bgm=this.file('audio/normal/normal-bg.mp3',true)
+  }
+};
+HorusAudio.prototype.scatterMode=function(){
+  if(!this.enabled)return;
+  this.stop(this.bgm);
+  if(this.scatterBgm){
+    this.scatterBgm.loop=true;
+    this.scatterBgm.play().catch(()=>{});
+  }else{
+    this.scatterBgm=this.file('audio/scatter/scatter-bg.mp3',true)
+  }
+};
+HorusAudio.prototype.sfx=function(name,mode='normal'){
+  if(this.enabled)this.file(`audio/${mode}/${name}.mp3`)
+};
+HorusAudio.prototype.setEnabled=function(v){
+  this.enabled=v;
+  if(!v){
+    this.stop(this.bgm);
+    this.stop(this.scatterBgm)
+  }
+};
+window.HorusAudioEngine=HorusAudio
+})();
