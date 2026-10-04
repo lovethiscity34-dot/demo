@@ -104,3 +104,26 @@ body[data-mode="SCATTER"] .reel-vfx{display:none!important}
 .reels.tumbling .cell.tumble-new{opacity:.92;filter:drop-shadow(0 -10px 14px rgba(53,217,255,.18))}
 @keyframes cell-remove-smooth{0%{opacity:1;transform:scale(1);filter:blur(0)}55%{opacity:.72;transform:scale(.94);filter:blur(.7px)}100%{opacity:0;transform:scale(.62);filter:blur(4px)}}
 .reels.tumbling .reel-track{overflow:visible}
+
+/* FINAL 5x5 LAYOUT FIX — preserve all existing mechanics, only correct reel sizing */
+.reel-frame{min-height:0;overflow:hidden}
+.reels{height:100%!important;min-height:0!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-template-rows:minmax(0,1fr);align-items:stretch}
+.reel-window{height:100%!important;min-height:0!important;overflow:hidden;display:block}
+.reel-track{min-height:0}
+.reel-track.settled{height:100%!important}
+.reel-track .cell{height:calc((100% - (var(--gap) * 4))/5)!important;min-height:0!important;flex:0 0 calc((100% - (var(--gap) * 4))/5)!important}
+@media(max-width:850px){
+  .reel-frame{min-height:0}
+  .reels{height:100%!important;min-height:0!important}
+  .reel-window{height:100%!important}
+}
+@media(max-width:520px){
+  .reel-frame{min-height:0}
+  .reels{height:100%!important;min-height:0!important}
+  .reel-window{height:100%!important}
+  .reel-track .cell{height:calc((100% - (var(--gap) * 4))/5)!important;flex-basis:calc((100% - (var(--gap) * 4))/5)!important}
+}
+/* Ensure the inherited cell-size percentage resolves against the 5-row reel viewport. */
+.reel-track{height:100%!important;overflow:visible}
+.reel-track.spinning{height:100%!important}
+.reel-track.settled{height:100%!important}
