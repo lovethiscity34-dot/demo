@@ -1,11 +1,24 @@
-# Horus Super Win 1000 — Scatter/Multiplier Patch
-Targeted patch for the latest `demo-main.zip`.
+HORUS SUPER WIN 1000 — SCATTER/MULTIPLIER + REEL AUDIO FIX V3
 
-Changes:
-- Multiplier is counted only when its symbol cell is part of a valid connected win during Scatter tumble.
-- Invalid/unconnected multipliers produce no history, no notification, and no multiplier payout effect.
-- Replaced bottom-toast multiplier notification with an integrated reel-area visual.
-- Replaced Scatter activation/retrigger bottom toast with an integrated reel-area visual.
-- Scatter retrigger formula: 4–5 = +15, 6–7 = +20, 8–9 = +25, then +5 per two additional Scatter symbols.
-- Retrigger can repeat during the same Scatter session.
-- Existing reel/centering/audio/tumble/7-connect code is otherwise left untouched.
+Dibuat berdasarkan base + patch Scatter/Multiplier sebelumnya, lalu ditambahkan perbaikan audio reel.
+
+Penting:
+- Patch ini mempertahankan notifikasi Multiplier dan Scatter yang sudah terintegrasi di area reel.
+- Tidak mengembalikan toast bawah untuk activation/multiplier.
+- Multiplier hanya diproses jika cell multiplier ikut dalam connect/win valid.
+- Retrigger Scatter: 4–5 +15, 6–7 +20, 8–9 +25, 10–11 +30, dst.
+- Audio rolling normal sekarang memakai file yang sama karakter suaranya dengan rolling Scatter yang sudah terbukti terdengar, tetapi diturunkan sedikit agar cocok dengan mode normal.
+- Jangan hapus asset/audio lain.
+
+File patch yang perlu di-replace:
+js/audio-engine.js
+js/game-engine.js
+js/main.js
+js/multiplier-engine.js
+js/scatter-mode.js
+js/tumble-engine.js
+css/core.css
+index.html
+audio/normal/reel-roll.mp3
+audio/scatter/reel-roll.mp3
+audio/scatter/symbol-win.mp3
