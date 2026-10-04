@@ -55,92 +55,130 @@
 
   Reel.prototype.animate=function(grid,turbo,mode='NORMAL'){
     this.ensurePhysicalReelStyle();
-    const count=turbo?22:30;
-    // Semua kolom mulai bersamaan. Perbedaan hanya pada berapa lama fase cruise
-    // berlangsung; kolom berikutnya melakukan 1 putaran ekstra sehingga tetap bergerak
-    // saat kolom sebelumnya sudah masuk fase deselerasi.
-    const decelMs=turbo?240:420;
-    const settle=turbo?100:180;
-    const stopEase='cubic-bezier(.08,.72,.16,1)';
-    const spinSpeed=turbo?1.35:0.92;
 
-    this.root.innerHTML=''; this.root.classList.add('rolling'); this.columns=[]; this.running=true;
+    /*
+     * PHYSICAL REEL V4
+     * -----------------
+     * The important difference from the previous versions is that there is
+     * ONE continuous motion loop per column. All five columns are moving at
+     * the same time. We do NOT let a column finish its whole animation while
+     * the others are changing state together.
+     *
+     * Timeline (normal):
+     *   0ms       : C1 C2 C3 C4 C5 all roll
+     *   ~1500ms   : C1 brakes -> stops, C2-C5 still roll
+     *   ~1800ms   : C2 brakes -> stops, C3-C5 still roll
+     *   ~2100ms   : C3 brakes -> stops, C4-C5 still roll
+     *   ~2400ms   : C4 brakes -> stops, C5 still rolls
+     *   ~2700ms   : C5 brakes -> stops
+     *
+     * Every reel owns its own blur state. Therefore a stopped reel becomes
+     * perfectly sharp while the next reels remain visibly blurred/moving.
+     */
+    const count=turbo?34:42;
+    const pitchGapFallback=6;
+    const cruiseMs=turbo?1050:1450;
+    const stopGap=turbo?190:300;
+    const decelMs=turbo?260:430;
+    const settle=turbo?90:140;
+    const speed=turbo?1.55:1.25;
+    const stopEase='cubic-bezier(.12,.76,.18,1)';
+
+    this.root.innerHTML='';
+    this.root.classList.add('rolling');
+    this.columns=[];
+    this.running=true;
+
     for(let c=0;c<HorusConfig.COLS;c++){
       const made=this.makeSpinColumn(grid.map(row=>row[c]),mode,count);
-      this.root.appendChild(made.col); this.columns.push(made);
+      made.col.className='reel-window reel-active';
       made.track.style.transition='none';
+      made.track.style.animation='none';
       made.track.style.transform='translate3d(0,0,0)';
+      this.root.appendChild(made.col);
+      this.columns.push(made);
     }
 
     return new Promise(resolve=>{
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        const finishPromises=[];
+        const jobs=[];
 
         this.columns.forEach(({track,count},c)=>{
+          const reelWindow=this.columns[c].col;
           const first=track.querySelector('.cell');
           const cs=getComputedStyle(track);
-          const gap=parseFloat(cs.rowGap||cs.gap||'0')||0;
-          const pitch=first?first.getBoundingClientRect().height+gap:0;
-          if(!pitch){finishPromises.push(Promise.resolve());return}
+          const gap=parseFloat(cs.rowGap||cs.gap||'')||parseFloat(cs.columnGap||'')||pitchGapFallback;
+          const pitch=first ? first.getBoundingClientRect().height+gap : 0;
+          if(!pitch){jobs.push(Promise.resolve());return;}
 
-          const baseDistance=count*pitch;
-          // Setiap column berikutnya mendapat satu siklus simbol ekstra.
-          // Karena kecepatannya sama, semua mulai bersama tetapi stop terlihat berurutan.
-          const extraCycles=c;
-          const totalDistance=baseDistance + extraCycles*(HorusConfig.ROWS*pitch);
-          const decelDistance=Math.max(pitch*2.5,Math.min(pitch*3.5,totalDistance-pitch));
-          const cruiseDistance=Math.max(pitch,totalDistance-decelDistance);
-          const cruiseDuration=Math.max(760,Math.round(cruiseDistance/spinSpeed));
+          /*
+           * All reels use the same physical cruise speed. The only difference
+           * is WHEN braking starts. This is what makes C2-C5 continue rolling
+           * while C1 is already stopped.
+           */
+          const stopDelay=c*stopGap;
+          const cruiseDistance=Math.max(pitch*12,Math.round(cruiseMs*speed));
+          const decelDistance=Math.max(pitch*3,Math.round(decelMs*speed*.92));
+          const totalDistance=cruiseDistance+decelDistance;
 
-          // Setiap reel punya status visual sendiri. Ini penting agar setelah
-          // column 1 berhenti, blur/rolling column 1 langsung hilang sementara
-          // column 2-5 tetap terlihat benar-benar bergerak.
-          const reelWindow=this.columns[c].col;
-          reelWindow.classList.add('reel-active');
           reelWindow.classList.remove('reel-slowing','reel-stopped');
-
-          track.style.setProperty('--spin-distance',`${totalDistance}px`);
-          track.style.setProperty('--spin-duration',`${cruiseDuration+decelMs}ms`);
-          track.style.setProperty('--spin-delay','0ms');
+          reelWindow.classList.add('reel-active');
           track.classList.add('spinning');
 
-          // Fase 1 — semua column bergerak bersamaan dengan kecepatan konstan.
-          const cruise=track.animate(
+          /*
+           * The strip contains enough real cells to cover the complete path.
+           * We deliberately leave a generous tail so there can never be an
+           * empty window while a later reel is still spinning.
+           */
+          const required=Math.ceil(totalDistance/pitch)+HorusConfig.ROWS+4;
+          while(track.children.length<required){
+            const item={id:this.symbols.weighted(mode),multiplier:mode==='SCATTER'?this.symbols.rollMultiplier():0};
+            track.insertBefore(this.cell(item,0,c),track.lastElementChild);
+          }
+
+          const cruise=()=>track.animate(
             [
               {transform:'translate3d(0,0,0)'},
               {transform:`translate3d(0,-${cruiseDistance}px,0)`}
             ],
-            {duration:cruiseDuration,easing:'linear',fill:'forwards',iterations:1}
+            {duration:cruiseMs+stopDelay,easing:'linear',fill:'forwards',iterations:1}
           );
 
-          // Fase 2 — hanya setelah cruise masing-masing selesai, column masuk fast→slow.
-          const finish=cruise.finished.then(()=>{
-            // Hanya reel yang akan berhenti yang masuk fase slow-down.
-            // Reel setelahnya tetap dalam cruise penuh sampai gilirannya.
-            reelWindow.classList.remove('reel-active');
-            reelWindow.classList.add('reel-slowing');
+          /*
+           * All reels are launched immediately. For C2-C5 the linear phase is
+           * simply longer. There is NO pause and NO blank frame between phases.
+           */
+          const cruiseAnim=cruise();
 
-            const decel=track.animate(
-              [
-                {transform:`translate3d(0,-${cruiseDistance}px,0)`},
-                {transform:`translate3d(0,-${totalDistance}px,0)`}
-              ],
-              {duration:decelMs,easing:stopEase,fill:'forwards',iterations:1}
-            );
-            return decel.finished.then(()=>{
-              // Reel benar-benar sudah terkunci. Hapus blur hanya dari reel ini,
-              // bukan dari seluruh machine.
-              track.style.transform=`translate3d(0,-${totalDistance}px,0)`;
-              track.classList.remove('spinning');
-              reelWindow.classList.remove('reel-slowing','reel-active');
-              reelWindow.classList.add('reel-stopped');
-            }).catch(()=>null);
-          }).catch(()=>null);
+          const job=new Promise(done=>{
+            setTimeout(()=>{
+              reelWindow.classList.remove('reel-active');
+              reelWindow.classList.add('reel-slowing');
 
-          finishPromises.push(finish);
+              const decelStart=`translate3d(0,-${cruiseDistance}px,0)`;
+              const decelEnd=`translate3d(0,-${totalDistance}px,0)`;
+              const decel=track.animate(
+                [
+                  {transform:decelStart},
+                  {transform:decelEnd}
+                ],
+                {duration:decelMs,easing:stopEase,fill:'forwards',iterations:1}
+              );
+
+              decel.finished.then(()=>{
+                /* Snap only this reel. Other reels are untouched. */
+                track.style.transform=decelEnd;
+                track.classList.remove('spinning');
+                reelWindow.classList.remove('reel-slowing','reel-active');
+                reelWindow.classList.add('reel-stopped');
+                done();
+              }).catch(()=>done());
+            },cruiseMs+stopDelay);
+          });
+          jobs.push(job);
         });
 
-        Promise.all(finishPromises).then(()=>{
+        Promise.all(jobs).then(()=>{
           this.root.classList.remove('rolling');
           setTimeout(()=>{
             this.running=false;
