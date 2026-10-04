@@ -97,3 +97,10 @@ body[data-mode="SCATTER"] .spin{border-color:#ffb08a;background:linear-gradient(
 .cell.win{animation:win-slow .78s ease-in-out infinite alternate!important}
 @keyframes win-slow{from{transform:scale(1)}to{transform:scale(1.045)}}
 body[data-mode="SCATTER"] .reel-vfx{display:none!important}
+
+/* SMOOTH TUMBLE / GRAVITY UPDATE — preserves the existing 5x5 reel layout */
+.reels.tumbling .cell{will-change:transform,opacity}
+.reels.tumbling .cell.removing{animation:cell-remove-smooth .5s cubic-bezier(.2,.7,.2,1) forwards!important}
+.reels.tumbling .cell.tumble-new{opacity:.92;filter:drop-shadow(0 -10px 14px rgba(53,217,255,.18))}
+@keyframes cell-remove-smooth{0%{opacity:1;transform:scale(1);filter:blur(0)}55%{opacity:.72;transform:scale(.94);filter:blur(.7px)}100%{opacity:0;transform:scale(.62);filter:blur(4px)}}
+.reels.tumbling .reel-track{overflow:visible}
