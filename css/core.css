@@ -89,3 +89,11 @@ body[data-mode="SCATTER"] .spin{border-color:#ffb08a;background:linear-gradient(
 @media(max-width:520px){
   .brand img{width:34px;height:34px}.brand h1{font-size:11px}.brand small{display:none}.top-actions{gap:4px}.icon{padding:7px 9px}.layout{padding:5px;gap:5px}.side{height:clamp(105px,21dvh,145px)}.machine{padding:5px}.reel-frame{padding:3px}.reels{gap:3px}.reel-window{--gap:3px}.cell{border-radius:7px}.cell img{width:76%;height:76%}.hud{grid-template-columns:1fr auto 1fr}.stat small{font-size:7px}.stat strong{font-size:11px}.spin{min-width:94px;min-height:42px;font-size:16px}.bet{width:35px;height:35px}.controls .control{font-size:8px;padding:6px 4px}.horus-card img{max-height:110px}.horus-card>div:last-child{font-size:8px}.scatter-buy-price{font-size:25px}
 }
+
+/* REEL WIN FIX — preserved from previous patch */
+.reel-track.spinning{transition-property:transform;transition-timing-function:cubic-bezier(.08,.72,.16,1);will-change:transform}
+.reels.rolling .cell img{filter:blur(1.15px) drop-shadow(0 7px 8px rgba(0,0,0,.45))}
+.reels.rolling .cell{backface-visibility:hidden}
+.cell.win{animation:win-slow .78s ease-in-out infinite alternate!important}
+@keyframes win-slow{from{transform:scale(1)}to{transform:scale(1.045)}}
+body[data-mode="SCATTER"] .reel-vfx{display:none!important}
