@@ -4,7 +4,6 @@
   Game.prototype.wait=function(ms){return new Promise(r=>setTimeout(r,ms))};
   Game.prototype.start=function(){this.grid=this.symbols.randomGrid('NORMAL');this.reels.render(this.grid);this.ui.update()};
   Game.prototype.enterScatter=function(spins){const sm=new HorusScatterMode(this);this.scatterSession++;this.scatterTotalWin=0;this.scatterSpinsPlayed=0;this.scatterTotalSpins=spins||HorusConfig.SCATTER_BASE_SPINS;this.scatterMaxMultiplier=1;return sm.begin(this.scatterTotalSpins)};
-  Game.prototype.queueNextScatterSpin=function(){if(this.freeSpins<=0||this.state===HorusGameState.SCATTER_END)return;clearTimeout(this._scatterTimer);this._scatterTimer=setTimeout(()=>{this._scatterTimer=null;if(!this.busy&&this.freeSpins>0)this.startSpin()},this.turbo?120:520)};
   Game.prototype.runSpin=async function(free,mode){
     if(this.busy)return; if(!free&&!this.credit.canAfford(this.bet.value)){this.ui.toast('Kredit tidak cukup untuk taruhan ini.');return}
     this.busy=true; this.mode=mode; this.setState(free?HorusGameState.SCATTER_SPIN:HorusGameState.SPIN_START);
@@ -13,9 +12,10 @@
     if(mode==='SCATTER'){this.audio.scatterMode();this.horus.set('ULTIMATE • SPIN')}else{this.audio.normalBgm();this.horus.set('GUARDIAN • SPIN')}
     this.ui.update(); this.grid=this.symbols.randomGrid(mode); this.setState(HorusGameState.ROLLING);
     await this.reels.animate(this.grid,this.turbo,mode); this.audio.sfx('reel-stop',mode==='SCATTER'?'scatter':'normal'); this.setState(HorusGameState.RESULT);
-    const scatterCount=this.wins.scatterCount(this.grid); const connectedWins=mode==='SCATTER'?this.wins.find(this.grid,mode):[]; const connectedMultiplier=mode==='SCATTER'?HorusMultiplierEngine.resolveConnected(this.grid,connectedWins):{multiplier:1,count:0}; const win=await this.tumble.run(this.grid,mode); let payout=win;
+    const scatterCount=this.wins.scatterCount(this.grid); const win=await this.tumble.run(this.grid,mode); let payout=win;
     if(mode==='SCATTER'){
-      const m=connectedMultiplier; this.multiplier=m.count?m.multiplier:1; if(m.count)this.scatterMaxMultiplier=Math.max(this.scatterMaxMultiplier,m.multiplier||1);
+      const connectedWins=this.wins.find(this.grid,mode);
+      const m=HorusMultiplierEngine.resolveConnected(this.grid,connectedWins); this.multiplier=m.multiplier; if(m.count)this.scatterMaxMultiplier=Math.max(this.scatterMaxMultiplier,m.multiplier||1);
       if(m.count){this.ui.addHistory(`MULTIPLIER • x${m.multiplier}`,Math.floor(win*m.multiplier));this.audio.sfx(m.multiplier>=100?'big-multiplier':'multiplier','scatter');if(win>0)payout=Math.floor(win*m.multiplier)}
       this.ui.showMultiplier(m);
     }
@@ -29,10 +29,9 @@
     }
     if(this.credit.resetIfNeeded())this.ui.toast('Demo reset: kredit kembali ke Rp 100.000.');
     if(this.busy){this.busy=false;this.setState(this.freeSpins>0?HorusGameState.SCATTER:HorusGameState.IDLE);this.ui.update();}
-    if(this.freeSpins>0)this.queueNextScatterSpin();
-    else if(this.auto)setTimeout(()=>this.startSpin(),this.turbo?120:520);
+    if(this.auto||this.freeSpins>0)setTimeout(()=>this.startSpin(),this.turbo?120:520);
   };
-  Game.prototype.startSpin=function(){if(this.busy)return;return this.freeSpins>0?new HorusScatterMode(this).spin():new HorusNormalMode(this).spin()};
+  Game.prototype.startSpin=function(){if(this.busy)return this.startSpinPromise;this.startSpinPromise=(this.freeSpins>0?new HorusScatterMode(this).spin():new HorusNormalMode(this).spin()).finally(()=>{this.startSpinPromise=null});return this.startSpinPromise};
   Game.prototype.increaseBet=function(){if(!this.busy){this.bet.increase();this.audio.sfx('bet','ui');this.ui.update()}};
   Game.prototype.decreaseBet=function(){if(!this.busy){this.bet.decrease();this.audio.sfx('bet','ui');this.ui.update()}};
   Game.prototype.buyFree=async function(){
@@ -43,8 +42,7 @@
     this.credit.spend(cost); this.auto=false; this.freeSpins=0; this.multiplier=1; this.totalWin=0;
     await this.enterScatter(HorusConfig.SCATTER_BASE_SPINS);
     this.busy=false;this.ui.update();this.ui.showScatterNotification(1,HorusConfig.SCATTER_BASE_SPINS);
-    // Scatter selalu dimulai otomatis; pemain tidak perlu menekan tombol FREE SPIN.
-    this.queueNextScatterSpin(); return true;
+    this.startSpin(); return true;
   };
   window.HorusGameEngine=Game;
 })();
