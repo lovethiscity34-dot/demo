@@ -3,7 +3,8 @@ function HorusAudio(){
   this.enabled=true;
   this.ctx=null;
   this.bgm=null;
-  this.scatterBgm=null
+  this.scatterBgm=null;
+  this.reelRoll=null
 }
 HorusAudio.prototype.init=function(){
   if(this.ctx)return;
@@ -19,6 +20,17 @@ HorusAudio.prototype.file=function(path,loop=false){
 };
 HorusAudio.prototype.stop=function(a){
   if(a){a.pause();a.currentTime=0}
+};
+HorusAudio.prototype.startReelRoll=function(mode='normal'){
+  if(!this.enabled)return;
+  this.stopReelRoll();
+  const folder=mode==='SCATTER'?'scatter':'normal';
+  const a=this.file(`audio/${folder}/reel-roll.mp3`,true);
+  if(a)a.volume=0.13;
+  this.reelRoll=a;
+};
+HorusAudio.prototype.stopReelRoll=function(){
+  if(this.reelRoll){this.stop(this.reelRoll);this.reelRoll=null}
 };
 HorusAudio.prototype.normalBgm=function(){
   if(!this.enabled)return;
@@ -47,7 +59,8 @@ HorusAudio.prototype.setEnabled=function(v){
   this.enabled=v;
   if(!v){
     this.stop(this.bgm);
-    this.stop(this.scatterBgm)
+    this.stop(this.scatterBgm);
+    this.stopReelRoll()
   }
 };
 window.HorusAudioEngine=HorusAudio
