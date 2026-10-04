@@ -4,7 +4,7 @@
   Game.prototype.wait=function(ms){return new Promise(r=>setTimeout(r,ms))};
   Game.prototype.start=function(){this.grid=this.symbols.randomGrid('NORMAL');this.reels.render(this.grid);this.ui.update()};
   Game.prototype.enterScatter=function(spins){const sm=new HorusScatterMode(this);this.scatterSession++;this.scatterTotalWin=0;this.scatterSpinsPlayed=0;this.scatterTotalSpins=spins||HorusConfig.SCATTER_BASE_SPINS;this.scatterMaxMultiplier=1;return sm.begin(this.scatterTotalSpins)};
-  Game.prototype.queueNextScatterSpin=function(){if(this.freeSpins<=0||this.state===HorusGameState.SCATTER_END)return;clearTimeout(this._scatterTimer);this._scatterTimer=setTimeout(()=>{this._scatterTimer=null;if(this.freeSpins>0&&!this.busy)this.startSpin()},this.turbo?120:520)};
+  Game.prototype.queueNextScatterSpin=function(){if(this.freeSpins<=0||this.state===HorusGameState.SCATTER_END)return;clearTimeout(this._scatterTimer);this._scatterTimer=setTimeout(()=>{this._scatterTimer=null;if(!this.busy&&this.freeSpins>0)this.startSpin()},this.turbo?120:520)};
   Game.prototype.runSpin=async function(free,mode){
     if(this.busy)return; if(!free&&!this.credit.canAfford(this.bet.value)){this.ui.toast('Kredit tidak cukup untuk taruhan ini.');return}
     this.busy=true; this.mode=mode; this.setState(free?HorusGameState.SCATTER_SPIN:HorusGameState.SPIN_START);
@@ -32,7 +32,7 @@
     if(this.freeSpins>0)this.queueNextScatterSpin();
     else if(this.auto)setTimeout(()=>this.startSpin(),this.turbo?120:520);
   };
-  Game.prototype.startSpin=function(){if(this.busy)return this.startSpinPromise;this.startSpinPromise=(this.freeSpins>0?new HorusScatterMode(this).spin():new HorusNormalMode(this).spin()).finally(()=>{this.startSpinPromise=null});return this.startSpinPromise};
+  Game.prototype.startSpin=function(){if(this.busy)return;return this.freeSpins>0?new HorusScatterMode(this).spin():new HorusNormalMode(this).spin()};
   Game.prototype.increaseBet=function(){if(!this.busy){this.bet.increase();this.audio.sfx('bet','ui');this.ui.update()}};
   Game.prototype.decreaseBet=function(){if(!this.busy){this.bet.decrease();this.audio.sfx('bet','ui');this.ui.update()}};
   Game.prototype.buyFree=async function(){
@@ -43,8 +43,8 @@
     this.credit.spend(cost); this.auto=false; this.freeSpins=0; this.multiplier=1; this.totalWin=0;
     await this.enterScatter(HorusConfig.SCATTER_BASE_SPINS);
     this.busy=false;this.ui.update();this.ui.showScatterNotification(1,HorusConfig.SCATTER_BASE_SPINS);
-    // Setelah transisi Scatter selesai, Free Spin pertama langsung dimulai otomatis.
-    this.startSpin(); return true;
+    // Scatter selalu dimulai otomatis; pemain tidak perlu menekan tombol FREE SPIN.
+    this.queueNextScatterSpin(); return true;
   };
   window.HorusGameEngine=Game;
 })();
