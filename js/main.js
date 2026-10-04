@@ -19,7 +19,25 @@
     markWins(wins){document.querySelectorAll('.cell.win').forEach(e=>e.classList.remove('win'));wins.flatMap(w=>w.cells).forEach(p=>{const e=document.querySelector(`.cell[data-r="${p.r}"][data-c="${p.c}"]`);if(e)e.classList.add('win')})},
     addHistory(label,amount){const h=$('#history'),d=document.createElement('div');d.innerHTML=`<span>${label}</span><strong>${amount?'+'+fmt(amount):'—'}</strong>`;h.prepend(d);while(h.children.length>8)h.lastElementChild.remove()},
     bigWin(amount){$('#bigWinAmount').textContent=fmt(amount);$('#bigWin').classList.add('show');setTimeout(()=>$('#bigWin').classList.remove('show'),1800)},
-    showMultiplier(m){if(m.count)this.toast(`${m.count} MULTIPLIER • MAKS x${m.multiplier}`)},showScatterResult(data){return new Promise(resolve=>{const box=$('#scatterResult');$('#scatterResultTotal').textContent=fmt(data.totalWin);$('#scatterResultSpins').textContent=`${data.spinsPlayed} / ${data.totalSpins}`;$('#scatterResultMultiplier').textContent=`x${Math.max(1,data.maxMultiplier)}`;box.classList.add('show');const done=()=>{box.classList.remove('show');$('#scatterResultOk').removeEventListener('click',done);resolve()};$('#scatterResultOk').addEventListener('click',done,{once:true})})},
+    showMultiplier(m){
+      if(!m.count)return;
+      const frame=$('#reelEvent');
+      frame.className=`reel-event multiplier-event ${m.tier}`;
+      frame.innerHTML=`<div class="reel-event-kicker">MULTIPLIER TERHUBUNG</div><strong>x${m.multiplier}</strong><span>${m.count} simbol multiplier ikut dalam win</span>`;
+      frame.classList.remove('show');void frame.offsetWidth;frame.classList.add('show');
+      clearTimeout(this.eventTimer);this.eventTimer=setTimeout(()=>frame.classList.remove('show'),1700);
+    },
+    showScatterEvent(data){
+      const frame=$('#reelEvent');
+      const activation=data.activation;
+      frame.className=`reel-event scatter-event ${data.retrigger?'retrigger':'activation'}`;
+      frame.innerHTML=activation
+        ? `<div class="reel-event-kicker">TEMPLE AWAKENED</div><strong>SCATTER</strong><span>+${data.spins} FREE SPIN</span>`
+        : `<div class="reel-event-kicker">${data.retrigger?'SCATTER RETRIGGER':'SCATTER AWAKENED'}</div><strong>+${data.spins}</strong><span>${data.count} SCATTER • FREE SPIN</span>`;
+      frame.classList.remove('show');void frame.offsetWidth;frame.classList.add('show');
+      clearTimeout(this.eventTimer);this.eventTimer=setTimeout(()=>frame.classList.remove('show'),1800);
+    },
+    showScatterResult(data){return new Promise(resolve=>{const box=$('#scatterResult');$('#scatterResultTotal').textContent=fmt(data.totalWin);$('#scatterResultSpins').textContent=`${data.spinsPlayed} / ${data.totalSpins}`;$('#scatterResultMultiplier').textContent=`x${Math.max(1,data.maxMultiplier)}`;box.classList.add('show');const done=()=>{box.classList.remove('show');$('#scatterResultOk').removeEventListener('click',done);resolve()};$('#scatterResultOk').addEventListener('click',done,{once:true})})},
     openModal(title,body){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modal').classList.add('show')},
     closeModal(){$('#modal').classList.remove('show')},
     paytable(){const rows=game.symbols.symbols.filter(s=>!s.scatter).slice().reverse();$('#paytable').innerHTML=rows.map(s=>`<div class="payrow"><img src="${s.svg}" alt="${s.name}"><b>${s.name}</b><span>×${s.value}</span></div>`).join('')}

@@ -1,6 +1,9 @@
 (function(){
   function Scatter(game){this.game=game}
-  Scatter.prototype.addFreeSpins=function(n){return HorusConfig.SCATTER_BASE_SPINS+Math.floor(n/3)*HorusConfig.SCATTER_EXTRA_PER_3};
+  Scatter.prototype.addFreeSpins=function(n){
+    if(n<HorusConfig.SCATTER_TRIGGER)return 0;
+    return HorusConfig.SCATTER_BASE_SPINS+Math.floor((n-HorusConfig.SCATTER_TRIGGER)/2)*HorusConfig.SCATTER_EXTRA_PER_3;
+  };
   Scatter.prototype.begin=function(spins){
     this.game.freeSpins=spins||HorusConfig.SCATTER_BASE_SPINS;
     this.game.mode='SCATTER'; this.game.multiplier=1;
