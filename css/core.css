@@ -170,3 +170,9 @@ body[data-mode="SCATTER"] .reel-vfx{display:none!important}
     transform:translate(-50%,-50%) scaleY(1.04)!important;
   }
 }
+
+/* Scatter activation is a real in-machine center popup. It waits for FREE SPIN. */
+.scatter-activation{position:absolute;inset:0;display:grid;place-items:center;background:rgba(12,0,4,.42);z-index:20;opacity:0;pointer-events:none;transition:.2s;backdrop-filter:blur(2px)}
+.scatter-activation.show{opacity:1;pointer-events:auto}
+.scatter-activation-box{width:min(360px,82%);padding:20px 18px 18px;text-align:center;border:2px solid rgba(255,105,85,.9);border-radius:20px;background:radial-gradient(circle at 50% 30%,rgba(116,18,29,.98),rgba(22,2,7,.98) 72%);box-shadow:0 0 45px rgba(255,45,55,.35),inset 0 0 28px rgba(255,80,55,.12);animation:scatter-pop .28s ease-out}
+.scatter-activation-kicker{font-size:10px;letter-spacing:.2em;color:#ffb9a7;font-weight:900}.scatter-activation-count{margin-top:9px;font-size:clamp(16px,2vw,24px);font-weight:1000;color:#fff1d8;text-shadow:0 0 14px rgba(255,185,130,.45)}.scatter-activation-spins{margin-top:4px;font-size:clamp(20px,2.5vw,30px);font-weight:1000;letter-spacing:.08em;color:#ffd08f}.scatter-activation-btn{margin-top:16px;min-width:180px;min-height:52px;border-radius:14px;border:2px solid #ffd5b0;background:linear-gradient(180deg,#ffe0a8,#d94b2d);color:#2b0702;font-size:18px;font-weight:1000;letter-spacing:.1em;cursor:pointer;box-shadow:0 8px 26px rgba(255,65,35,.3)}.scatter-activation-btn:active{transform:translateY(1px) scale(.99)}@keyframes scatter-pop{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}@media(max-width:520px){.scatter-activation-box{padding:15px 12px}.scatter-activation-btn{min-width:150px;min-height:46px;font-size:15px}.scatter-activation-count{font-size:15px}.scatter-activation-spins{font-size:21px}}
