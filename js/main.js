@@ -19,29 +19,9 @@
     markWins(wins){document.querySelectorAll('.cell.win').forEach(e=>e.classList.remove('win'));wins.flatMap(w=>w.cells).forEach(p=>{const e=document.querySelector(`.cell[data-r="${p.r}"][data-c="${p.c}"]`);if(e)e.classList.add('win')})},
     addHistory(label,amount){const h=$('#history'),d=document.createElement('div');d.innerHTML=`<span>${label}</span><strong>${amount?'+'+fmt(amount):'—'}</strong>`;h.prepend(d);while(h.children.length>8)h.lastElementChild.remove()},
     bigWin(amount){$('#bigWinAmount').textContent=fmt(amount);$('#bigWin').classList.add('show');setTimeout(()=>$('#bigWin').classList.remove('show'),1800)},
-    showMultiplier(m){
-      if(!m.count)return;
-      const frame=$('#reelEvent');
-      if(!frame)return;
-      frame.className=`reel-event multiplier-event ${m.tier}`;
-      frame.innerHTML=`<div class="reel-event-kicker">MULTIPLIER TERHUBUNG</div><strong>x${m.multiplier}</strong><span>${m.count} simbol multiplier ikut dalam win</span>`;
-      frame.classList.remove('show');void frame.offsetWidth;frame.classList.add('show');
-      clearTimeout(this.eventTimer);this.eventTimer=setTimeout(()=>frame.classList.remove('show'),1700);
-    },
-    showScatterEvent(data){
-      const frame=$('#reelEvent');
-      if(!frame)return;
-      frame.className=`reel-event scatter-event ${data.retrigger?'retrigger':'activation'}`;
-      frame.innerHTML=data.activation
-        ? `<div class="reel-event-kicker">TEMPLE AWAKENED</div><strong>SCATTER</strong><span>+${data.spins} FREE SPIN</span>`
-        : `<div class="reel-event-kicker">${data.retrigger?'SCATTER RETRIGGER':'SCATTER AWAKENED'}</div><strong>+${data.spins}</strong><span>${data.count} SCATTER • FREE SPIN</span>`;
-      frame.classList.remove('show');void frame.offsetWidth;frame.classList.add('show');
-      clearTimeout(this.eventTimer);this.eventTimer=setTimeout(()=>frame.classList.remove('show'),1800);
-    },
     showMultiplier(m){if(m.count)this.toast(`${m.count} MULTIPLIER • MAKS x${m.multiplier}`)},showScatterResult(data){return new Promise(resolve=>{const box=$('#scatterResult');$('#scatterResultTotal').textContent=fmt(data.totalWin);$('#scatterResultSpins').textContent=`${data.spinsPlayed} / ${data.totalSpins}`;$('#scatterResultMultiplier').textContent=`x${Math.max(1,data.maxMultiplier)}`;box.classList.add('show');const done=()=>{box.classList.remove('show');$('#scatterResultOk').removeEventListener('click',done);resolve()};$('#scatterResultOk').addEventListener('click',done,{once:true})})},
     openModal(title,body){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modal').classList.add('show')},
-    closeModal(){$('#modal').classList.remove('show')},
-    paytable(){const rows=game.symbols.symbols.filter(s=>!s.scatter).slice().reverse();$('#paytable').innerHTML=rows.map(s=>`<div class="payrow"><img src="${s.svg}" alt="${s.name}"><b>${s.name}</b><span>×${s.value}</span></div>`).join('')}
+    closeModal(){$('#modal').classList.remove('show')}
   };
   game.horus=new HorusController();
   $('#spinBtn').onclick=()=>{game.audio.init();game.startSpin()};
@@ -57,13 +37,13 @@
   };
   $('#soundBtn').onclick=()=>{game.audio.init();game.audio.setEnabled(!game.audio.enabled);$('#soundBtn').textContent=game.audio.enabled?'🔊':'🔇';if(game.audio.enabled)game.audio.sfx('button','ui')};
   $('#closeModal').onclick=()=>game.ui.closeModal();$('#modal').onclick=e=>{if(e.target===$('#modal'))game.ui.closeModal()};
-  const rules=`<h4>Permainan</h4><ul><li>Grid 5×5.</li><li>7+ simbol identik membentuk kombinasi win pada putaran biasa.</li><li>Simbol menang dihapus dan grid tumble/refill.</li><li>4+ Scatter memicu sesi Scatter.</li></ul><h4>Scatter</h4><ul><li>15 Free Spin dasar; setiap 3 Scatter menambah 5 spin.</li><li>Horus berubah ke Ultimate / Divine Flight.</li><li>Multiplier muncul independen dari x1 sampai x1000.</li><li>Tingkat warna: x1–9 hijau, x10–19 biru, x20–49 ungu, x50–99 magenta, x100–249 gold, x250–499 cyan, x500–999 solar, x1000 divine.</li></ul><h4>Bet & Kredit</h4><ul><li>Mulai Rp100.000 virtual.</li><li>Sampai Rp4.000: +Rp100.</li><li>Rp4.000 → Rp5.000 → Rp10.000 → selanjutnya ×2.</li><li>Bet di atas kredit diblokir.</li><li>Jika saldo turun di bawah Rp10.000, demo diisi ulang menjadi Rp100.000.</li></ul>`;
+  const symbolRows=game.symbols.symbols.filter(s=>!s.scatter).slice().reverse().map(s=>`<div class="rules-payrow"><img src="${s.svg}" alt="${s.name}"><b>${s.name}</b><span>×${s.value}</span></div>`).join('');
+  const rules=`<h4>Permainan</h4><ul><li>Grid 5×5.</li><li>7+ simbol identik membentuk kombinasi win pada putaran biasa.</li><li>Simbol menang dihapus dan grid tumble/refill.</li><li>4+ Scatter memicu sesi Scatter.</li></ul><h4>Nilai Simbol</h4><div class="rules-paytable">${symbolRows}</div><h4>Scatter</h4><ul><li>15 Free Spin dasar; setiap 3 Scatter menambah 5 spin.</li><li>Horus berubah ke Ultimate / Divine Flight.</li><li>Multiplier muncul independen dari x1 sampai x1000.</li><li>Tingkat warna: x1–9 hijau, x10–19 biru, x20–49 ungu, x50–99 magenta, x100–249 gold, x250–499 cyan, x500–999 solar, x1000 divine.</li></ul><h4>Bet & Kredit</h4><ul><li>Mulai Rp100.000 virtual.</li><li>Sampai Rp4.000: +Rp100.</li><li>Rp4.000 → Rp5.000 → Rp10.000 → selanjutnya ×2.</li><li>Bet di atas kredit diblokir.</li><li>Jika saldo turun di bawah Rp10.000, demo diisi ulang menjadi Rp100.000.</li></ul>`;
   $('#rulesBtn').onclick=()=>game.ui.openModal('Aturan Game',rules);$('#infoBtn').onclick=()=>game.ui.openModal('Cara Bermain',rules);
-  game.ui.paytable();
   const preload=[
     'assets/symbols/horus.svg','assets/symbols/eye.svg','assets/symbols/ankh.svg','assets/symbols/scarab.svg','assets/symbols/sun.svg','assets/symbols/falcon.svg','assets/symbols/crown.svg','assets/symbols/lotus.svg','assets/symbols/scatter.svg','assets/symbols/horus.svg',
-    'assets/horus/horus-idle.svg','assets/horus/horus-spin.svg','assets/horus/horus-win.svg','assets/horus/horus-bigwin.svg','assets/horus/horus-scatter.svg','assets/horus/horus-ultimate.svg',
-    'assets/backgrounds/normal-bg.svg','assets/backgrounds/scatter-bg.svg','assets/backgrounds/ultimate-bg.svg','assets/effects/energy-ring.svg','assets/effects/divine-ray.svg'
+    'assets/horus/horus-idle.webp','assets/horus/horus-spin.webp','assets/horus/horus-win.webp','assets/horus/horus-bigwin.webp','assets/horus/horus-scatter.webp','assets/horus/horus-ultimate.webp',
+    'assets/backgrounds/normal-bg.png','assets/backgrounds/scatter-bg.png','assets/backgrounds/ultimate-bg.svg','assets/effects/energy-ring.svg','assets/effects/divine-ray.svg'
   ];
   function preloadImages(){return Promise.all(preload.map(src=>new Promise(resolve=>{const im=new Image();im.onload=resolve;im.onerror=resolve;im.src=src})));}
   function finishLoading(){const screen=$('#loadingScreen');screen.classList.add('loaded');setTimeout(()=>screen.remove(),500);game.start()}
