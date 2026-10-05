@@ -1,5 +1,5 @@
 (function(){
-  function Game(){this.credit=new HorusCreditEngine();this.bet=new HorusBetEngine();this.symbols=new HorusSymbolEngine();this.wins=new HorusWinEngine();this.reels=new HorusReelEngine(this.symbols);this.tumble=new HorusTumbleEngine(this);this.multiplier=1;this.grid=[];this.busy=false;this.turbo=false;this.auto=false;this.freeSpins=0;this.totalWin=0;this.mode='NORMAL';this.state=HorusGameState.IDLE;this.audio=new HorusAudioEngine();this.horus=null;this.ui=null;this.scatterSession=0;this.scatterTotalWin=0;this.scatterSpinsPlayed=0;this.scatterTotalSpins=0;this.scatterMaxMultiplier=1}
+  function Game(){this.credit=new HorusCreditEngine();this.bet=new HorusBetEngine();this.symbols=new HorusSymbolEngine();this.wins=new HorusWinEngine();this.reels=new HorusReelEngine(this.symbols);this.tumble=new HorusTumbleEngine(this);this.multiplier=1;this.grid=[];this.busy=false;this.turbo=false;this.auto=false;this.freeSpins=0;this.totalWin=0;this.mode='NORMAL';this.state=HorusGameState.IDLE;this.audio=new HorusAudioEngine();this.horus=null;this.ui=null;this.scatterSession=0;this.scatterTotalWin=0;this.scatterSpinsPlayed=0;this.scatterTotalSpins=0;this.scatterMaxMultiplier=1;this.scatterAwaitingStart=false}
   Game.prototype.setState=function(s){this.state=s;if(this.ui)this.ui.state(s)};
   Game.prototype.wait=function(ms){return new Promise(r=>setTimeout(r,ms))};
   Game.prototype.start=function(){this.grid=this.symbols.randomGrid('NORMAL');this.reels.render(this.grid);this.ui.update()};
@@ -30,7 +30,8 @@
       const add=new HorusScatterMode(this).addFreeSpins(scatterCount);
       await this.enterScatter(add);
       await this.ui.showScatterActivation(scatterCount,add);
-      this.busy=false;this.ui.update();this.startSpin();return;
+      this.scatterAwaitingStart=true;
+      this.busy=false;this.ui.update();return;
     }else if(free){
       if(scatterCount>=HorusConfig.SCATTER_TRIGGER){
         const extra=new HorusScatterMode(this).addFreeSpins(scatterCount);
@@ -54,9 +55,10 @@
     if(!this.credit.canAfford(cost)){this.busy=false;this.ui.update();this.ui.toast(`Kredit kurang untuk membeli Free Spin (${this.ui.fmt(cost)}).`);return false}
     this.credit.spend(cost); this.auto=false; this.freeSpins=0; this.multiplier=1; this.totalWin=0;
     await this.enterScatter(HorusConfig.SCATTER_BASE_SPINS);
+    this.scatterAwaitingStart=true;
     await this.ui.showScatterActivation(HorusConfig.SCATTER_TRIGGER,HorusConfig.SCATTER_BASE_SPINS);
     this.busy=false;this.ui.update();
-    this.startSpin(); return true;
+    return true;
   };
   window.HorusGameEngine=Game;
 })();

@@ -16,14 +16,13 @@
     return out;
   };
   Wins.prototype.scatterCount=function(grid){
-    const seen=new Set();let best=0;const dirs=[[1,0],[-1,0],[0,1],[0,-1]];
+    // Scatter trigger/retrigger uses TOTAL Scatter symbols on the 5x5 result.
+    // Any 4 or more Scatter symbols count, regardless of position/adjacency.
+    let count=0;
     for(let r=0;r<HorusConfig.ROWS;r++)for(let c=0;c<HorusConfig.COLS;c++){
-      const key=r+':'+c;if(!grid[r][c]||grid[r][c].id!=='scatter'||seen.has(key))continue;
-      const q=[[r,c]];seen.add(key);let size=0;
-      while(q.length){const [rr,cc]=q.shift();size++;for(const [dr,dc] of dirs){const nr=rr+dr,nc=cc+dc,k=nr+':'+nc;if(nr>=0&&nr<HorusConfig.ROWS&&nc>=0&&nc<HorusConfig.COLS&&!seen.has(k)&&grid[nr][nc]&&grid[nr][nc].id==='scatter'){seen.add(k);q.push([nr,nc])}}}
-      best=Math.max(best,size);
+      if(grid[r][c]&&grid[r][c].id==='scatter')count++;
     }
-    return best
+    return count;
   };
   Wins.prototype.payout=function(wins,bet){
     return wins.reduce((a,w)=>a+Math.floor(bet*w.mult*(w.cells.length/8)),0)
