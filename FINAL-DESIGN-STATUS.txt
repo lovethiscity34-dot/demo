@@ -1,0 +1,25 @@
+HORUS SUPER WIN 1000 — FINAL DESIGN READY
+
+This package is the design-only final build.
+
+Gameplay/mechanics are preserved from the locked baseline.
+No files under js/ were changed by the visual redesign.
+Visual additions/changes include:
+- Egyptian premium UI/button styling
+- centered +/- bet controls on desktop/mobile
+- redesigned Horus header/logo presentation
+- Egyptian Normal/Scatter reel frame styling
+- desktop Horus altar/baseplate presentation
+- enlarged/cropped mobile Horus presentation
+- premium Egyptian symbol presentation
+- center-reel notification styling
+- Normal/Scatter visual treatment and backgrounds
+- preserved PWA icons/manifest and existing animations/audio
+
+APPROVED REEL AUDIO SOURCE:
+Freesound — “slot machine reels sound.m4a” by aghirlandaio
+Sound ID: 415074
+License: Creative Commons 0 (CC0)
+Source: https://freesound.org/people/aghirlandaio/sounds/415074/
+
+Note: the original Freesound download is not embedded here because Freesound requires login for the original download. The existing verified reel-roll asset in this package is preserved so the build remains self-contained and playable.
