@@ -16,13 +16,7 @@
     return out;
   };
   Wins.prototype.scatterCount=function(grid){
-    // Scatter trigger/retrigger uses TOTAL Scatter symbols on the 5x5 result.
-    // Any 4 or more Scatter symbols count, regardless of position/adjacency.
-    let count=0;
-    for(let r=0;r<HorusConfig.ROWS;r++)for(let c=0;c<HorusConfig.COLS;c++){
-      if(grid[r][c]&&grid[r][c].id==='scatter')count++;
-    }
-    return count;
+    let n=0;grid.flat().forEach(c=>{if(c&&c.id==='scatter')n++});return n
   };
   Wins.prototype.payout=function(wins,bet){
     return wins.reduce((a,w)=>a+Math.floor(bet*w.mult*(w.cells.length/8)),0)

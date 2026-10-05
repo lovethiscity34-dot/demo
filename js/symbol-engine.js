@@ -12,19 +12,15 @@
     return pool[(Math.random()*pool.length)|0];
   };
   Symbols.prototype.randomGrid=function(mode){
-    return Array.from({length:HorusConfig.ROWS},()=>Array.from({length:HorusConfig.COLS},()=>({id:this.weighted(mode),multiplier:mode==='SCATTER'?this.rollMultiplier():0})));
+    return Array.from({length:HorusConfig.ROWS},()=>Array.from({length:HorusConfig.COLS},()=>{
+      const id=this.weighted(mode);
+      return {id,multiplier:mode==='SCATTER'&&id!=='scatter'?this.rollMultiplier():0};
+    }));
   };
   Symbols.prototype.rollMultiplier=function(){
-    if(Math.random()>.01)return 0;
-    const r=Math.random();
-    if(r<.64)return 1+((Math.random()*9)|0);
-    if(r<.84)return 10+((Math.random()*10)|0);
-    if(r<.94)return 20+((Math.random()*30)|0);
-    if(r<.975)return 50+((Math.random()*50)|0);
-    if(r<.992)return 100+((Math.random()*150)|0);
-    if(r<.998)return 250+((Math.random()*250)|0);
-    if(r<.9997)return 500+((Math.random()*500)|0);
-    return 1000;
+    if(Math.random()>.01)return 0; const r=Math.random();
+    if(r<.64)return 1+((Math.random()*9)|0); if(r<.84)return 10+((Math.random()*10)|0); if(r<.94)return 20+((Math.random()*30)|0);
+    if(r<.975)return 50+((Math.random()*50)|0); if(r<.992)return 100+((Math.random()*150)|0); if(r<.998)return 250+((Math.random()*250)|0); if(r<.9997)return 500+((Math.random()*500)|0); return 1000;
   };
   window.HorusSymbolEngine=Symbols;
 })();
