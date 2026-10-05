@@ -27,7 +27,10 @@
     }
     if(payout>0){this.credit.add(payout);if(mode==='SCATTER')this.scatterTotalWin+=payout;this.audio.sfx(payout>=this.bet.value*10?'big-win':'small-win',mode==='SCATTER'?'scatter':'normal');if(payout>=this.bet.value*20){this.setState(HorusGameState.BIG_WIN);this.horus.set('DIVINE • SUPER WIN');this.ui.bigWin(payout);await this.wait(this.turbo?550:900)}else this.horus.set(mode==='SCATTER'?'ULTIMATE • WIN':'GUARDIAN • WIN')}
     if(!free&&scatterCount>=HorusConfig.SCATTER_TRIGGER){
-      const add=new HorusScatterMode(this).addFreeSpins(scatterCount); await this.enterScatter(add); this.ui.reelNotification(`${scatterCount} SCATTER • ${add} FREE SPIN`,'scatter');
+      const add=new HorusScatterMode(this).addFreeSpins(scatterCount);
+      await this.enterScatter(add);
+      await this.ui.showScatterActivation(scatterCount,add);
+      this.busy=false;this.ui.update();this.startSpin();return;
     }else if(free){
       if(scatterCount>=HorusConfig.SCATTER_TRIGGER){
         const extra=new HorusScatterMode(this).addFreeSpins(scatterCount);
@@ -51,6 +54,7 @@
     if(!this.credit.canAfford(cost)){this.busy=false;this.ui.update();this.ui.toast(`Kredit kurang untuk membeli Free Spin (${this.ui.fmt(cost)}).`);return false}
     this.credit.spend(cost); this.auto=false; this.freeSpins=0; this.multiplier=1; this.totalWin=0;
     await this.enterScatter(HorusConfig.SCATTER_BASE_SPINS);
+    await this.ui.showScatterActivation(HorusConfig.SCATTER_TRIGGER,HorusConfig.SCATTER_BASE_SPINS);
     this.busy=false;this.ui.update();
     this.startSpin(); return true;
   };
