@@ -1,0 +1,30 @@
+/* Horus logo replacement patch
+   UI-only: keeps the new full logo proportional in Loading Screen and Top Bar.
+   No game/reel/state logic is changed.
+*/
+.loading-inner > img {
+  width: min(78vw, 520px);
+  max-width: 78vw;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.topbar .brand > img {
+  width: clamp(110px, 13vw, 190px);
+  max-width: 190px;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+  object-position: center;
+  flex: 0 1 auto;
+}
+
+@media (max-width: 700px) {
+  .topbar .brand > img {
+    width: 130px;
+    max-width: 130px;
+  }
+}
