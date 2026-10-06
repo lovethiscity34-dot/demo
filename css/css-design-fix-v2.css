@@ -190,3 +190,114 @@
     pointer-events:none;
   }
 }
+
+/* HORUS SUPER WIN 1000 — DESIGN ONLY FIX V4
+   1) Keep the 5x5 reel grid completely inside the safe viewing area of the new frame.
+   2) Enlarge desktop symbol art only; mobile symbol size remains unchanged.
+   3) Force the desktop altar to be visibly rendered beneath Horus.
+   No game-mechanic selectors or logic are changed here. */
+
+/* The generated frame has side pillars and an upper/lower ornament. The reel grid sits
+   behind that artwork, so its viewport must be inset into the frame's inner opening. */
+.reel-frame{
+  position:relative!important;
+  overflow:hidden!important;
+}
+.reels{
+  position:absolute!important;
+  left:9%!important;
+  right:9%!important;
+  top:13.5%!important;
+  bottom:12%!important;
+  width:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:7px!important;
+  z-index:2!important;
+}
+.reel-window{
+  min-width:0!important;
+  width:auto!important;
+  height:100%!important;
+  overflow:hidden!important;
+}
+.reel-track .cell{
+  overflow:hidden!important;
+  min-width:0!important;
+}
+
+/* Desktop only: make symbols visually stronger without touching mobile sizing. */
+@media(min-width:851px){
+  .reel-track .cell img{
+    width:84%!important;
+    height:84%!important;
+    max-width:118px!important;
+    max-height:118px!important;
+    left:50%!important;
+    top:50%!important;
+    margin:0!important;
+    object-fit:contain!important;
+    transform:translate(-50%,-50%)!important;
+  }
+  .reels.rolling .cell img{
+    transform:translate(-50%,-50%) scaleY(1.04)!important;
+  }
+
+  /* Keep the altar in the foreground and visibly attached to Horus's feet. */
+  .horus-card{
+    position:relative!important;
+    overflow:hidden!important;
+    isolation:isolate!important;
+  }
+  .horus-card img{
+    position:relative!important;
+    z-index:4!important;
+  }
+  .horus-altar{
+    position:absolute!important;
+    z-index:30!important;
+    left:50%!important;
+    bottom:-2px!important;
+    width:min(92%,580px)!important;
+    height:170px!important;
+    transform:translateX(-50%)!important;
+    display:block!important;
+    background:url('../assets/ui/horus-altar.svg') center bottom/100% auto no-repeat!important;
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:none!important;
+    filter:drop-shadow(0 12px 16px rgba(0,0,0,.68)) drop-shadow(0 0 20px rgba(247,201,77,.30))!important;
+  }
+  .horus-altar:before{
+    content:"";
+    position:absolute;
+    left:15%;right:15%;bottom:2px;height:30px;
+    border-radius:50%;
+    background:radial-gradient(ellipse at center,rgba(247,201,77,.42),rgba(247,201,77,0) 74%);
+    filter:blur(6px);
+  }
+}
+
+/* Mobile: same frame layering, but keep the currently-approved symbol scale. */
+@media(max-width:850px){
+  .reels{
+    left:9.5%!important;
+    right:9.5%!important;
+    top:13.5%!important;
+    bottom:11%!important;
+    gap:4px!important;
+  }
+  .reel-window{height:100%!important}
+}
+@media(max-width:520px){
+  .reels{
+    left:9.5%!important;
+    right:9.5%!important;
+    top:13.5%!important;
+    bottom:10%!important;
+    gap:3px!important;
+  }
+}
