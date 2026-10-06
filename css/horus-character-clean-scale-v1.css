@@ -1,0 +1,74 @@
+/* HORUS SUPER WIN 1000 — HORUS CLEAN / SCALE V1
+   Visual-only patch. Removes decorative elements behind Horus and enlarges
+   the character so its visual weight matches the 5x5 slot machine.
+   No game logic, reel logic, RNG, audio, or mechanics are changed. */
+
+/* Remove every decorative layer that was sitting behind/around Horus.
+   The temple/background image remains untouched. */
+.horus-card .ring,
+.horus-card .horus-altar,
+.horus-card::before,
+.horus-card::after{
+  display:none !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  animation:none !important;
+  content:none !important;
+}
+
+/* Keep only the character as the focal element. */
+.horus-card{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+/* Desktop: make Horus larger and let the transparent artwork extend naturally
+   beyond the narrow side-card width without being clipped. */
+@media (min-width:851px){
+  .layout,
+  .side{
+    overflow:visible !important;
+  }
+
+  .horus-card{
+    overflow:visible !important;
+    min-height:560px !important;
+    justify-content:center !important;
+    align-items:center !important;
+  }
+
+  .horus-card #horusArt{
+    width:auto !important;
+    height:min(82vh,640px) !important;
+    max-width:none !important;
+    max-height:none !important;
+    margin:0 auto !important;
+    object-fit:contain !important;
+    object-position:center bottom !important;
+    transform:translateY(10px) scale(1.08) !important;
+    transform-origin:50% 82% !important;
+    z-index:5 !important;
+  }
+
+  /* Preserve the larger character during its existing state animations. */
+  body[data-horus="idle"] #horusArt{animation:horusBreath 3.2s ease-in-out infinite !important}
+  body[data-horus="spin"] #horusArt{animation:horusSpinReady .7s ease-in-out infinite alternate !important}
+  body[data-horus="win"] #horusArt{animation:horusWinPose .8s ease-in-out infinite alternate !important}
+  body[data-horus="bigwin"] #horusArt,
+  body[data-horus="ultimate"] #horusArt{animation:horusUltimate .9s ease-in-out infinite alternate !important}
+  body[data-horus="scatter"] #horusArt{animation:horusScatterFloat 1.8s ease-in-out infinite !important}
+}
+
+/* Mobile: remove the same background elements, but keep the approved compact
+   character scale/placement so the 5x5 machine still fits the viewport. */
+@media (max-width:850px){
+  .horus-card{
+    background:transparent !important;
+    overflow:visible !important;
+  }
+
+  .horus-card #horusArt{
+    z-index:5 !important;
+  }
+}
