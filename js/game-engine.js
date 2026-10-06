@@ -10,7 +10,10 @@
     this.audio.sfx('reel-start',mode==='SCATTER'?'scatter':'normal');this.audio.startReelRoll(mode==='SCATTER'?'scatter':'normal');
     if(mode==='SCATTER'){this.audio.scatterMode();this.horus.set('ULTIMATE • SPIN')}else{this.audio.normalBgm();this.horus.set('GUARDIAN • SPIN')}
     this.ui.update();this.grid=this.symbols.randomGrid(mode);this.setState(HorusGameState.ROLLING);await this.reels.animate(this.grid,this.turbo,mode);this.audio.stopReelRoll();this.audio.sfx('reel-stop',mode==='SCATTER'?'scatter':'normal');this.setState(HorusGameState.RESULT);
-    const scatterCount=this.wins.scatterCount(this.grid);const win=await this.tumble.run(this.grid,mode);let payout=win;
+    const win=await this.tumble.run(this.grid,mode);let payout=win;
+    // Count Scatter symbols AFTER the full tumble/refill sequence so newly
+    // dropped Scatter symbols are included in the same 5x5 final result.
+    const scatterCount=this.wins.scatterCount(this.grid);
     if(mode==='SCATTER'){const m=HorusMultiplierEngine.resolveWinning(this.tumble.lastWinningMultipliers||[]);this.multiplier=m.multiplier;this.scatterMaxMultiplier=Math.max(this.scatterMaxMultiplier,m.multiplier||1);if(m.count){const multiplierWin=Math.floor(win*m.multiplier);this.ui.addHistory(`MULTIPLIER TERHUBUNG • x${m.multiplier}`,multiplierWin);this.audio.sfx(m.multiplier>=100?'big-multiplier':'multiplier','scatter');if(win>0)payout=multiplierWin;this.ui.showMultiplier(m)}}
     if(payout>0){this.credit.add(payout);if(mode==='SCATTER')this.scatterTotalWin+=payout;this.audio.sfx(payout>=this.bet.value*10?'big-win':'small-win',mode==='SCATTER'?'scatter':'normal');if(payout>=this.bet.value*20){this.setState(HorusGameState.BIG_WIN);this.horus.set('DIVINE • SUPER WIN');this.ui.bigWin(payout);await this.wait(this.turbo?550:900)}else this.horus.set(mode==='SCATTER'?'ULTIMATE • WIN':'GUARDIAN • WIN')}
     if(!free&&scatterCount>=HorusConfig.SCATTER_TRIGGER){const add=new HorusScatterMode(this).addFreeSpins(scatterCount);await this.enterScatter(add);await this.ui.showScatterEvent({count:scatterCount,spins:add,retrigger:false});}
