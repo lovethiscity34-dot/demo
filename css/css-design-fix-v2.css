@@ -1,0 +1,66 @@
+/* HORUS SUPER WIN 1000 — DESIGN-ONLY FIX V2
+   Visual/layout correction only. No gameplay or slot-mechanism code is changed. */
+
+/* 1) Let the 5x5 reel grid occupy the full reel frame.
+   The overlay nodes must stay absolute; otherwise they become flex items
+   and steal horizontal space from the reel grid. */
+.reel-frame > .reel-vfx,
+.reel-frame > #flash,
+.reel-frame > .reel-notification{
+  position:absolute!important;
+}
+.reel-frame > .reel-vfx,
+.reel-frame > #flash{inset:0!important}
+.reel-frame > .reel-notification{left:50%!important;top:50%!important}
+.reels{
+  position:relative!important;
+  z-index:3!important;
+  display:grid!important;
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  flex:1 1 100%!important;
+  align-self:stretch!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+}
+.reel-window{min-width:0!important;width:auto!important}
+
+/* 2) Mobile Horus: preserve the current size, but center the character. */
+.horus-card{align-items:center!important}
+.horus-card #horusState,
+.horus-card .state-label{display:none!important}
+
+/* 3) Desktop altar: bring it in front so it is actually visible beneath Horus. */
+@media(min-width:851px){
+  .horus-altar{
+    z-index:7!important;
+    display:block!important;
+    width:min(88%,520px)!important;
+    height:125px!important;
+    bottom:2px!important;
+    opacity:1!important;
+    pointer-events:none!important;
+  }
+}
+
+/* 4) Replace the top-left sun mark with the same PWA/web icon used by the site. */
+.brand img{
+  content:url('../assets/icons/icon-192.png')!important;
+  object-fit:contain!important;
+}
+
+/* 5) Remove the small sun mark from the main SPIN button. */
+.spin:after{display:none!important}
+
+/* 6) Loading screen: show the web/PWA icon instead of the Horus character. */
+.loading-inner img{
+  content:url('../assets/icons/icon-512.png')!important;
+  object-fit:contain!important;
+}
+
+/* Keep the mobile reel frame centered without changing any reel mechanics. */
+@media(max-width:850px){
+  .reel-frame{display:flex!important;align-items:stretch!important}
+  .reels{width:100%!important;flex:1 1 100%!important}
+  .horus-card{justify-content:center!important;align-items:center!important}
+}
