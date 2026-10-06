@@ -1,0 +1,30 @@
+{
+  "base": [
+    "ankh.png",
+    "crown.png",
+    "eye-of-horus.png",
+    "falcon-symbol.png",
+    "horus.png",
+    "lotus.png",
+    "scarab.png",
+    "solar-disc.png"
+  ],
+  "multipliers": [
+    "x1",
+    "x2",
+    "x5",
+    "x9",
+    "x10",
+    "x15",
+    "x19",
+    "x20",
+    "x50",
+    "x100",
+    "x250",
+    "x500",
+    "x1000"
+  ],
+  "scatter": [
+    "scatter-badge.png"
+  ]
+}
