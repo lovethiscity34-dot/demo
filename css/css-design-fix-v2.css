@@ -64,3 +64,129 @@
   .reels{width:100%!important;flex:1 1 100%!important}
   .horus-card{justify-content:center!important;align-items:center!important}
 }
+
+
+/* HORUS SUPER WIN 1000 — DESIGN ONLY FIX V3
+   Requested corrections:
+   1) 5x5 reel cells sit behind the generated machine-frame artwork.
+   2) Desktop symbols are larger; mobile symbol sizing remains unchanged.
+   3) Mobile HUD typography and SCATTER control label stay clean and centered.
+   4) Desktop Horus altar is explicitly visible and layered in front.
+   No gameplay/mechanism selectors or JS are modified here. */
+
+/* MACHINE FRAME LAYERING: frame artwork above the reel grid */
+.reel-frame{position:relative!important;isolation:isolate!important}
+.reels{
+  position:relative!important;
+  z-index:2!important;
+  width:100%!important;
+  max-width:none!important;
+}
+.reel-frame:before{
+  z-index:8!important;
+  pointer-events:none!important;
+}
+.reel-frame:after{
+  z-index:9!important;
+  pointer-events:none!important;
+}
+.reel-frame > .reel-vfx,
+.reel-frame > #flash{
+  z-index:10!important;
+  pointer-events:none!important;
+}
+.reel-frame > .reel-notification{
+  z-index:20!important;
+}
+
+/* Desktop: larger symbol artwork while keeping the 5x5 geometry intact. */
+@media (min-width:851px){
+  .reel-track .cell img{
+    width:82%!important;
+    height:82%!important;
+    max-width:108px!important;
+    max-height:108px!important;
+    left:50%!important;
+    top:50%!important;
+    object-fit:contain!important;
+    margin:0!important;
+    transform:translate(-50%,-50%)!important;
+  }
+  .reels.rolling .reel-track .cell img{
+    transform:translate(-50%,-50%) scaleY(1.04)!important;
+  }
+}
+
+/* Keep the frame artwork on top without clipping the five columns. */
+.reel-track .cell{
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+
+/* Mobile HUD: keep numeric values on one line and keep SCATTER label intact. */
+@media (max-width:850px){
+  .hud .stat strong{
+    white-space:nowrap!important;
+    display:block!important;
+    text-align:inherit!important;
+    line-height:1.15!important;
+  }
+  .hud .stat{
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .controls .control{
+    white-space:nowrap!important;
+    text-align:center!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:3px!important;
+    min-width:0!important;
+  }
+  .controls .control.primary{
+    letter-spacing:-.01em!important;
+    padding-left:4px!important;
+    padding-right:4px!important;
+  }
+}
+@media (max-width:520px){
+  .hud .stat small{font-size:6.5px!important}
+  .hud .stat strong{font-size:10.5px!important}
+  .controls .control{font-size:7.5px!important;gap:2px!important}
+}
+
+/* Desktop Horus altar: force a visible, correctly layered baseplate. */
+@media (min-width:851px){
+  .horus-card{
+    position:relative!important;
+    overflow:hidden!important;
+    isolation:isolate!important;
+  }
+  .horus-card img{
+    position:relative!important;
+    z-index:4!important;
+  }
+  .horus-altar{
+    position:absolute!important;
+    z-index:12!important;
+    left:50%!important;
+    bottom:10px!important;
+    transform:translateX(-50%)!important;
+    display:block!important;
+    width:min(94%,560px)!important;
+    height:160px!important;
+    background:url('../assets/ui/horus-altar.svg') center bottom/100% auto no-repeat!important;
+    filter:drop-shadow(0 10px 14px rgba(0,0,0,.62)) drop-shadow(0 0 18px rgba(247,201,77,.22))!important;
+    pointer-events:none!important;
+  }
+  .horus-altar:before{
+    content:"";
+    position:absolute;
+    left:13%;right:13%;bottom:2px;height:24px;
+    border-radius:50%;
+    background:radial-gradient(ellipse at center,rgba(247,201,77,.48),rgba(247,201,77,0) 72%);
+    filter:blur(5px);
+    pointer-events:none;
+  }
+}
