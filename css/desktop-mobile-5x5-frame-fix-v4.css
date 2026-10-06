@@ -1,0 +1,152 @@
+/* HORUS SUPER WIN 1000 — 5x5 FRAME / CENTERING PATCH V4
+   Visual-only patch. No JavaScript, RNG, reel, bet, scatter or audio logic changed.
+
+   Goal:
+   - Keep exactly 5 columns x 5 rows on desktop and mobile.
+   - Put the complete 5x5 grid inside the clear opening of the ornate frame.
+   - Keep every symbol centered inside its cell and fully visible.
+   - Keep the decorative frame above the reel grid.
+*/
+
+.reel-frame{
+  position:relative!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+}
+
+/* The frame artwork is 1536x1024 and its actual clear opening starts
+   well inside the outer edges. These insets prevent the pillars and
+   top/bottom ornaments from covering any of the 25 cells. */
+.reels{
+  position:absolute!important;
+  left:12.8%!important;
+  right:12.8%!important;
+  top:18.2%!important;
+  bottom:14.2%!important;
+  width:auto!important;
+  height:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:7px!important;
+  align-items:stretch!important;
+  z-index:2!important;
+}
+
+.reel-window{
+  width:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:100%!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+
+.reel-track{
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+}
+
+.reel-track .cell{
+  min-width:0!important;
+  min-height:0!important;
+  width:100%!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+
+/* Desktop: centered, strong symbols without touching the mobile sizing. */
+@media (min-width:851px){
+  .reel-track .cell img{
+    position:absolute!important;
+    left:50%!important;
+    top:50%!important;
+    width:80%!important;
+    height:80%!important;
+    max-width:108px!important;
+    max-height:108px!important;
+    margin:0!important;
+    object-fit:contain!important;
+    object-position:center!important;
+    transform:translate(-50%,-50%)!important;
+  }
+
+  .reels.rolling .reel-track .cell img{
+    transform:translate(-50%,-50%) scaleY(1.04)!important;
+  }
+}
+
+/* Mobile/tablet: same safe frame opening, with smaller gaps so the
+   five columns remain balanced on narrow screens. */
+@media (max-width:850px){
+  .reels{
+    left:12%!important;
+    right:12%!important;
+    top:17.5%!important;
+    bottom:13.5%!important;
+    gap:4px!important;
+  }
+
+  .reel-track .cell img{
+    width:72%!important;
+    height:72%!important;
+    max-width:100%!important;
+    max-height:100%!important;
+    object-fit:contain!important;
+    object-position:center!important;
+    margin:0 auto!important;
+    transform:none!important;
+  }
+}
+
+@media (max-width:520px){
+  .reels{
+    left:11.8%!important;
+    right:11.8%!important;
+    top:17.8%!important;
+    bottom:13%!important;
+    gap:3px!important;
+  }
+
+  .reel-track .cell img{
+    width:70%!important;
+    height:70%!important;
+  }
+}
+
+@media (max-width:380px){
+  .reels{
+    left:11.5%!important;
+    right:11.5%!important;
+    top:18%!important;
+    bottom:12.5%!important;
+  }
+
+  .reel-track .cell img{
+    width:68%!important;
+    height:68%!important;
+  }
+}
+
+/* The decorative frame must remain above symbols, but notifications/effects
+   keep their existing higher layers. */
+.reel-frame:before{
+  z-index:8!important;
+  pointer-events:none!important;
+}
+.reel-frame:after{
+  z-index:9!important;
+  pointer-events:none!important;
+}
+.reel-frame > .reel-vfx,
+.reel-frame > #flash{
+  z-index:10!important;
+  pointer-events:none!important;
+}
+.reel-frame > .reel-notification{
+  z-index:20!important;
+}
