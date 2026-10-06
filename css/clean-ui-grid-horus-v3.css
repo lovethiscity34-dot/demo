@@ -1,0 +1,108 @@
+/* HORUS SUPER WIN 1000 — CLEAN UI / 5x5 GRID / MOBILE HORUS V3
+   UI-only patch. No JS or game mechanism changes. */
+
+/* 1) TOP BAR + OUTER MACHINE: truly clean, no blur/glass/border shell. */
+.topbar,
+.topbar:after{
+  background:transparent !important;
+  border:0 !important;
+  border-bottom:0 !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+.machine,
+.machine:before{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  outline:0 !important;
+}
+
+/* Keep the actual Egyptian reel artwork/frame. */
+.reel-frame{
+  box-shadow:none !important;
+}
+
+/* 2) 5x5 GRID: place all five columns inside the actual clear opening
+      of the ornate frame instead of letting the side/top ornaments cover cells. */
+.reel-frame{
+  padding:52px 62px 48px !important;
+  overflow:hidden !important;
+}
+.reels{
+  width:100% !important;
+  height:100% !important;
+  min-height:0 !important;
+  margin:0 auto !important;
+  grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  gap:6px !important;
+  align-self:stretch !important;
+  box-sizing:border-box !important;
+}
+.reel-window{
+  min-width:0 !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
+}
+.reel-track{
+  min-width:0 !important;
+}
+.cell{
+  min-width:0 !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+}
+.cell img{
+  width:74% !important;
+  height:74% !important;
+  max-width:100% !important;
+  max-height:100% !important;
+  object-fit:contain !important;
+  object-position:center !important;
+}
+
+/* 3) MOBILE: move Horus slightly downward so the head is fully visible. */
+@media(max-width:850px){
+  .reel-frame{
+    padding:38px 27px 30px !important;
+  }
+  .reels{
+    gap:4px !important;
+  }
+  .cell img{
+    width:72% !important;
+    height:72% !important;
+  }
+  .horus-card img{
+    transform:translateY(58px) scale(1.26) !important;
+    transform-origin:50% 50% !important;
+  }
+}
+
+@media(max-width:520px){
+  .reel-frame{
+    padding:36px 20px 27px !important;
+  }
+  .reels{
+    gap:3px !important;
+  }
+  .cell img{
+    width:72% !important;
+    height:72% !important;
+  }
+  .horus-card img{
+    transform:translateY(62px) scale(1.28) !important;
+  }
+}
+
+@media(max-width:380px){
+  .reel-frame{
+    padding-left:16px !important;
+    padding-right:16px !important;
+  }
+  .horus-card img{
+    transform:translateY(58px) scale(1.24) !important;
+  }
+}
