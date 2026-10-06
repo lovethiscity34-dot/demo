@@ -1,0 +1,150 @@
+/*
+  HORUS SUPER WIN 1000 — CLEAN FRAME / HORUS FX / 5x5 GRID PATCH
+  UI-only. No JavaScript/game mechanism is changed.
+*/
+
+/* 1) CLEAN DESKTOP + MOBILE:
+      remove the outer machine and top-bar containers' heavy borders,
+      so the temple background reads continuously. The actual reel artwork
+      remains intact. */
+.topbar {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+.machine {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+/* Keep the decorative reel frame itself; only its outer machine shell is removed. */
+.reel-frame {
+  box-shadow: none !important;
+}
+
+/* 2) Remove decorative animated solar/ring effects around/behind Horus. */
+.reel-frame .reel-vfx,
+.reel-frame .vfx-ray,
+.reel-frame .vfx-ring {
+  display: none !important;
+  animation: none !important;
+}
+
+.horus-card .ring,
+.horus-card .horus-altar {
+  display: none !important;
+  animation: none !important;
+  opacity: 0 !important;
+}
+
+.horus-card::before,
+.horus-card::after {
+  display: none !important;
+  animation: none !important;
+  box-shadow: none !important;
+}
+
+/* Keep Horus itself clean and prominent. */
+.horus-card {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+/* 3) 5x5 GRID:
+      create a safe inner breathing room so the top/bottom frame ornaments
+      never cover the symbol artwork. We do not change the reel engine. */
+#reels {
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 2 !important;
+  padding: clamp(28px, 4.2vh, 48px) clamp(14px, 1.5vw, 24px) !important;
+  overflow: visible !important;
+}
+
+/* Generated reel columns/cells: never allow them to push outside the
+   available interior. */
+#reels > * {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Symbols stay fully visible inside each cell. */
+#reels img {
+  max-width: 82% !important;
+  max-height: 82% !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Prevent the reel notification/flash layer from changing the symbol layout. */
+#flash,
+#reelNotification {
+  z-index: 8 !important;
+}
+
+/* Desktop: a little more breathing room because the ornate top/bottom
+   frame elements occupy more vertical space. */
+@media (min-width: 901px) {
+  #reels {
+    padding-top: clamp(34px, 4.8vh, 56px) !important;
+    padding-bottom: clamp(34px, 4.8vh, 56px) !important;
+    padding-left: clamp(18px, 1.8vw, 28px) !important;
+    padding-right: clamp(18px, 1.8vw, 28px) !important;
+  }
+
+  #reels img {
+    max-width: 84% !important;
+    max-height: 84% !important;
+  }
+}
+
+/* Mobile: tighter but still enough clearance from the frame's top/bottom
+   ornaments. */
+@media (max-width: 900px) {
+  .topbar {
+    background: transparent !important;
+  }
+
+  .machine {
+    width: 100% !important;
+  }
+
+  #reels {
+    padding-top: clamp(22px, 4.5vw, 34px) !important;
+    padding-bottom: clamp(22px, 4.5vw, 34px) !important;
+    padding-left: clamp(8px, 2.2vw, 16px) !important;
+    padding-right: clamp(8px, 2.2vw, 16px) !important;
+  }
+
+  #reels img {
+    max-width: 78% !important;
+    max-height: 78% !important;
+  }
+}
+
+/* Very narrow phones: prioritize complete symbols over oversized artwork. */
+@media (max-width: 420px) {
+  #reels {
+    padding-top: 18px !important;
+    padding-bottom: 18px !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  #reels img {
+    max-width: 74% !important;
+    max-height: 74% !important;
+  }
+}
