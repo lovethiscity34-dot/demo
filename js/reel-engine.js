@@ -32,7 +32,7 @@
   Reel.prototype.cell=function(cell,r,c){
     const s=this.symbols.get(cell.id); const d=document.createElement('div'); d.className='cell';
     d.dataset.r=r; d.dataset.c=c; d.dataset.id=s.id;
-    d.innerHTML=`<img src="${s.svg}" alt="${s.name}">`;
+    d.innerHTML=`<img src="${s.png}" alt="${s.name}">`;
     if(s.scatter)d.insertAdjacentHTML('beforeend','<span class="scatter-label">SCATTER</span>');
     if(cell.multiplier>0)d.insertAdjacentHTML('beforeend',`<span class="multiplier ${HorusMultiplierEngine.tier(cell.multiplier)}">x${cell.multiplier}</span>`);
     return d;
