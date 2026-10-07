@@ -9,7 +9,7 @@
     }
     Object.entries(counts).forEach(([id,cells])=>{
       if(cells.length>=needed){
-        const s=cells.length>=21?12:cells.length>=17?8:cells.length>=13?5:3;
+        const s=cells.length>=21?20:cells.length>=17?12:cells.length>=13?7:4;
         out.push({id,cells,mult:s});
       }
     });
